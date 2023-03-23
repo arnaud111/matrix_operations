@@ -681,6 +681,71 @@ impl<T: Default + Copy> Matrix<T> {
         Matrix::new(new_data, (self.shape.0 + 1, self.shape.1))
     }
 
+    /// Add a row to the matrix
+    /// The row will be added to the index specified
+    /// If the index is greater than the number of rows, the row will be added to the end
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let new_matrix = matrix.append_row_initialized(1, 10).unwrap();
+    ///
+    /// assert_eq!(new_matrix.shape(), (3, 3));
+    /// assert_eq!(new_matrix.as_slice(), [1, 2, 3, 10, 10, 10, 4, 5, 6]);
+    /// ```
+    ///
+    /// If the index is greater than the number of rows, the row will be added to the end
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let new_matrix = matrix.append_row_initialized(2, 10).unwrap();
+    ///
+    /// assert_eq!(new_matrix.shape(), (3, 3));
+    /// assert_eq!(new_matrix.as_slice(), [1, 2, 3, 4, 5, 6, 10, 10, 10]);
+    /// ```
+    ///
+    /// If the matrix is empty, a new matrix will be created with the row
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data: Vec<u32> = Vec::new();
+    /// let shape = (0, 0);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let new_matrix = matrix.append_row_initialized(0, 10).unwrap();
+    ///
+    /// assert_eq!(new_matrix.shape(), (1, 1));
+    /// assert_eq!(new_matrix.as_slice(), [10]);
+    /// ```
+    pub fn append_row_initialized(&self, index: usize, value: T) -> Result<Matrix<T>, Box<dyn Error>> {
+        if self.data.len() == 0 {
+            return Matrix::new(vec![value], (1, 1));
+        }
+        let mut new_data = Vec::new();
+        for i in 0..index * self.shape.1 {
+            if i < self.data.len() {
+                new_data.push(self.data[i]);
+            }
+        }
+        for _ in 0..self.shape.1 {
+            new_data.push(value);
+        }
+        for i in index * self.shape.1..self.data.len() {
+            new_data.push(self.data[i]);
+        }
+        Matrix::new(new_data, (self.shape.0 + 1, self.shape.1))
+    }
+
     /// Apply a function to each element of the matrix
     ///
     /// # Examples
