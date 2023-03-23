@@ -57,6 +57,16 @@ impl<T: Default + Copy + Add<Output = T>> Matrix<T> {
         }
         Ok(matrix)
     }
+
+    pub fn add_value(&self, value: T) -> Matrix<T> {
+        let mut matrix = Matrix::default(self.shape);
+        for i in 0..self.shape.0 {
+            for j in 0..self.shape.1 {
+                matrix[i][j] = self[i][j] + value;
+            }
+        }
+        matrix
+    }
 }
 
 impl<T: Default + Copy + Sub<Output = T>> Matrix<T> {
@@ -163,6 +173,19 @@ mod tests {
         let m1 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
         let m2 = Matrix::from_2d_vec(vec![vec![2, 4, 6], vec![8, 10, 12]]).unwrap();
         let m3 = m1.multiply_by_value(2);
+        assert_eq!(m2.shape, m3.shape);
+        for i in 0..m2.shape.0 {
+            for j in 0..m2.shape.1 {
+                assert_eq!(m2[i][j], m3[i][j]);
+            }
+        }
+    }
+
+    #[test]
+    fn test_add_value() {
+        let m1 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
+        let m2 = Matrix::from_2d_vec(vec![vec![2, 3, 4], vec![5, 6, 7]]).unwrap();
+        let m3 = m1.add_value(1);
         assert_eq!(m2.shape, m3.shape);
         for i in 0..m2.shape.0 {
             for j in 0..m2.shape.1 {
