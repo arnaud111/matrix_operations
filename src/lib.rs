@@ -58,40 +58,40 @@ pub struct Matrix<T> {
     pub(crate) shape: (usize, usize),
 }
 
-/// Allows the matrix to be indexed as a 2-dimensional array
-///
-/// # Examples
-///
-/// To get specific elements of the matrix, use the `[row][col]` operator:
-/// ```
-/// use matrix_operations::Matrix;
-///
-/// let data = vec![1, 2, 3, 4, 5, 6];
-/// let shape = (2, 3);
-/// let matrix = Matrix::new(data, shape).unwrap();
-///
-/// assert_eq!(matrix[0][0], 1);
-/// assert_eq!(matrix[0][1], 2);
-/// assert_eq!(matrix[0][2], 3);
-/// assert_eq!(matrix[1][0], 4);
-/// assert_eq!(matrix[1][1], 5);
-/// assert_eq!(matrix[1][2], 6);
-/// ```
-///
-/// To get specific rows of the matrix, use the `[row]` operator:
-/// ```
-/// use matrix_operations::Matrix;
-///
-/// let data = vec![1, 2, 3, 4, 5, 6];
-/// let shape = (2, 3);
-/// let matrix = Matrix::new(data, shape).unwrap();
-///
-/// assert_eq!(matrix[0], vec![1, 2, 3]);
-/// assert_eq!(matrix[1], vec![4, 5, 6]);
-/// ```
 impl<T> Index<usize> for Matrix<T> {
     type Output = [T];
 
+    /// Allows the matrix to be indexed as a 2-dimensional array
+    ///
+    /// # Examples
+    ///
+    /// To get specific elements of the matrix, use the `[row][col]` operator:
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// assert_eq!(matrix[0][0], 1);
+    /// assert_eq!(matrix[0][1], 2);
+    /// assert_eq!(matrix[0][2], 3);
+    /// assert_eq!(matrix[1][0], 4);
+    /// assert_eq!(matrix[1][1], 5);
+    /// assert_eq!(matrix[1][2], 6);
+    /// ```
+    ///
+    /// To get specific rows of the matrix, use the `[row]` operator:
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// assert_eq!(matrix[0], vec![1, 2, 3]);
+    /// assert_eq!(matrix[1], vec![4, 5, 6]);
+    /// ```
     fn index(&self, index: usize) -> &Self::Output {
         let start = index * self.shape.1;
         let end = start + self.shape.1;
@@ -123,28 +123,28 @@ impl<T> IndexMut<usize> for Matrix<T> {
     }
 }
 
-/// Allows the matrix to be printed
-///
-/// # Examples
-///
-/// ```
-/// use matrix_operations::Matrix;
-///
-/// let data = vec![1, 2, 3, 4, 5, 6];
-/// let shape = (2, 3);
-/// let matrix = Matrix::new(data, shape).unwrap();
-///
-/// println!("{}", matrix);
-/// assert_eq!(format!("{}", matrix), "1 2 3 \n4 5 6 \n");
-/// ```
-///
-/// # Results
-///
-/// ```text
-/// 1 2 3
-/// 4 5 6
-/// ```
 impl<T> Display for Matrix<T> where T: Display {
+    /// Allows the matrix to be printed
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// println!("{}", matrix);
+    /// assert_eq!(format!("{}", matrix), "1 2 3 \n4 5 6 \n");
+    /// ```
+    ///
+    /// # Results
+    ///
+    /// ```text
+    /// 1 2 3
+    /// 4 5 6
+    /// ```
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let mut s = String::new();
         for i in 0..self.shape.0 {
