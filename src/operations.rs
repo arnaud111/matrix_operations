@@ -93,6 +93,16 @@ impl<T: Default + Copy + Sub<Output = T>> Matrix<T> {
         }
         matrix
     }
+
+    pub fn value_sub(&self, value: T) -> Matrix<T> {
+        let mut matrix = Matrix::default(self.shape);
+        for i in 0..self.shape.0 {
+            for j in 0..self.shape.1 {
+                matrix[i][j] = value - self[i][j];
+            }
+        }
+        matrix
+    }
 }
 
 #[cfg(test)]
@@ -209,6 +219,19 @@ mod tests {
         let m1 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
         let m2 = Matrix::from_2d_vec(vec![vec![0, 1, 2], vec![3, 4, 5]]).unwrap();
         let m3 = m1.sub_value(1);
+        assert_eq!(m2.shape, m3.shape);
+        for i in 0..m2.shape.0 {
+            for j in 0..m2.shape.1 {
+                assert_eq!(m2[i][j], m3[i][j]);
+            }
+        }
+    }
+
+    #[test]
+    fn test_value_sub() {
+        let m1 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
+        let m2 = Matrix::from_2d_vec(vec![vec![0, -1, -2], vec![-3, -4, -5]]).unwrap();
+        let m3 = m1.value_sub(1);
         assert_eq!(m2.shape, m3.shape);
         for i in 0..m2.shape.0 {
             for j in 0..m2.shape.1 {
