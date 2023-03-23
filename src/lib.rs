@@ -808,6 +808,148 @@ impl<T: Default + Copy + Add<Output = T>> Matrix<T> {
         }
         Ok(matrix)
     }
+
+    /// Add a column from a matrix
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let shape1 = (2, 3);
+    /// let data1 = vec![1, 2, 3, 4, 5, 6];
+    /// let shape2 = (1, 3);
+    /// let data2 = vec![1, 2, 3];
+    /// let matrix1 = Matrix::new(data1, shape1).unwrap();
+    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    ///
+    /// let new_matrix = matrix1.add_column(&matrix2).unwrap();
+    ///
+    /// assert_eq!(new_matrix[0][0], 2);
+    /// assert_eq!(new_matrix[0][1], 4);
+    /// assert_eq!(new_matrix[0][2], 6);
+    /// assert_eq!(new_matrix[1][0], 5);
+    /// assert_eq!(new_matrix[1][1], 7);
+    /// assert_eq!(new_matrix[1][2], 9);
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// If the second matrix is not row with same number of column as the first matrix, an error will be returned
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let shape1 = (2, 3);
+    /// let data1 = vec![1, 2, 3, 4, 5, 6];
+    /// let shape2 = (1, 2);
+    /// let data2 = vec![1, 2];
+    /// let matrix1 = Matrix::new(data1, shape1).unwrap();
+    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    ///
+    /// let new_matrix = matrix1.add_column(&matrix2);
+    ///
+    /// assert!(new_matrix.is_err());
+    /// ```
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let shape1 = (2, 3);
+    /// let data1 = vec![1, 2, 3, 4, 5, 6];
+    /// let shape2 = (2, 3);
+    /// let data2 = vec![1, 2, 3, 4, 5, 6];
+    /// let matrix1 = Matrix::new(data1, shape1).unwrap();
+    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    ///
+    /// let new_matrix = matrix1.add_column(&matrix2);
+    ///
+    /// assert!(new_matrix.is_err());
+    /// ```
+    pub fn add_column(&self, other: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
+        if other.shape.0 != 1 {
+            return Err("Second matrix need to have 1 row".into());
+        }
+        if other.shape.1 != self.shape.1 {
+            return Err("Second matrix need to have same number of columns".into());
+        }
+        let mut matrix = Matrix::default(self.shape);
+        for i in 0..self.data.len() {
+            matrix.data[i] = self.data[i] + other.data[i % other.shape.1];
+        }
+        Ok(matrix)
+    }
+
+    /// Add a row from a matrix
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let shape1 = (2, 3);
+    /// let data1 = vec![1, 2, 3, 4, 5, 6];
+    /// let shape2 = (2, 1);
+    /// let data2 = vec![1, 2];
+    /// let matrix1 = Matrix::new(data1, shape1).unwrap();
+    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    ///
+    /// let new_matrix = matrix1.add_row(&matrix2).unwrap();
+    ///
+    /// assert_eq!(new_matrix[0][0], 2);
+    /// assert_eq!(new_matrix[0][1], 3);
+    /// assert_eq!(new_matrix[0][2], 4);
+    /// assert_eq!(new_matrix[1][0], 6);
+    /// assert_eq!(new_matrix[1][1], 7);
+    /// assert_eq!(new_matrix[1][2], 8);
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// If the second matrix is not column with same number of row as the first matrix, an error will be returned
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let shape1 = (2, 3);
+    /// let data1 = vec![1, 2, 3, 4, 5, 6];
+    /// let shape2 = (2, 2);
+    /// let data2 = vec![1, 2, 3, 4];
+    /// let matrix1 = Matrix::new(data1, shape1).unwrap();
+    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    ///
+    /// let new_matrix = matrix1.add_row(&matrix2);
+    ///
+    /// assert!(new_matrix.is_err());
+    /// ```
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let shape1 = (2, 3);
+    /// let data1 = vec![1, 2, 3, 4, 5, 6];
+    /// let shape2 = (3, 1);
+    /// let data2 = vec![1, 2, 3];
+    /// let matrix1 = Matrix::new(data1, shape1).unwrap();
+    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    ///
+    /// let new_matrix = matrix1.add_row(&matrix2);
+    ///
+    /// assert!(new_matrix.is_err());
+    /// ```
+    pub fn add_row(&self, other: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
+        if other.shape.1 != 1 {
+            return Err("Second matrix need to have 1 column".into());
+        }
+        if other.shape.0 != self.shape.0 {
+            return Err("Second matrix need to have same number of rows".into());
+        }
+        let mut matrix = Matrix::default(self.shape);
+        for i in 0..self.data.len() {
+            matrix.data[i] = self.data[i] + other.data[i / self.shape.1];
+        }
+        Ok(matrix)
+    }
 }
 
 impl<T: Default + Copy + Sub<Output = T>> Matrix<T> {
