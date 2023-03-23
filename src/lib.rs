@@ -56,6 +56,13 @@ impl<T: Default + Copy> Matrix<T> {
         }
     }
 
+    pub fn initialised(shape: (usize, usize), value: T) -> Matrix<T> {
+        Matrix {
+            data: vec![value; shape.0 * shape.1],
+            shape,
+        }
+    }
+
     pub fn from_slice(data: &[T], shape: (usize, usize)) -> Result<Matrix<T>, Box<dyn Error>> {
         if data.len() != shape.0 * shape.1 {
             return Err("Data length does not match shape".into());
@@ -120,6 +127,14 @@ mod tests {
         let shape = (2, 3);
         let matrix: Matrix<u32> = Matrix::default(shape);
         assert_eq!(matrix.data, vec![0, 0, 0, 0, 0, 0]);
+        assert_eq!(matrix.shape, (2, 3));
+    }
+
+    #[test]
+    fn test_initialised() {
+        let shape = (2, 3);
+        let matrix: Matrix<u32> = Matrix::initialised(shape, 1);
+        assert_eq!(matrix.data, vec![1, 1, 1, 1, 1, 1]);
         assert_eq!(matrix.shape, (2, 3));
     }
 

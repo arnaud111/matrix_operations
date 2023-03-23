@@ -38,7 +38,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn transpose() {
+    fn test_transpose() {
         let m1 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
         let m2 = Matrix::from_2d_vec(vec![vec![1, 4], vec![2, 5], vec![3, 6]]).unwrap();
         let m1 = m1.transpose();
@@ -51,7 +51,7 @@ mod tests {
     }
 
     #[test]
-    fn dot() {
+    fn test_dot() {
         let m1 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
         let m2 = Matrix::from_2d_vec(vec![vec![1, 4], vec![2, 5], vec![3, 6]]).unwrap();
         let m3 = Matrix::from_2d_vec(vec![vec![14, 32], vec![32, 77]]).unwrap();
@@ -65,7 +65,7 @@ mod tests {
     }
 
     #[test]
-    fn dot_error() {
+    fn test_dot_error() {
         let m1 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
         let m2 = Matrix::from_2d_vec(vec![vec![1, 4], vec![2, 5]]).unwrap();
         let m3 = m1.dot(&m2);
