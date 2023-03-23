@@ -15,6 +15,14 @@ impl<T> std::ops::Index<usize> for Matrix<T> {
     }
 }
 
+impl<T> std::ops::IndexMut<usize> for Matrix<T> {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        let start = index * self.shape.1;
+        let end = start + self.shape.1;
+        &mut self.data[start..end]
+    }
+}
+
 impl<T: Default + std::marker::Copy> Matrix<T> {
 
     pub fn new(data: Vec<T>, shape: (usize, usize)) -> Result<Matrix<T>, Box<dyn Error>> {
@@ -99,5 +107,24 @@ mod tests {
         assert_eq!(matrix[1][0], 4);
         assert_eq!(matrix[1][1], 5);
         assert_eq!(matrix[1][2], 6);
+    }
+
+    #[test]
+    fn test_index_mut() {
+        let data = vec![1, 2, 3, 4, 5, 6];
+        let shape = (2, 3);
+        let mut matrix = Matrix::new(data, shape).unwrap();
+        matrix[0][0] -= 7;
+        matrix[0][1] += 8;
+        matrix[0][2] /= 9;
+        matrix[1][0] *= 10;
+        matrix[1][1] %= 11;
+        matrix[1][2] = 12;
+        assert_eq!(matrix[0][0], 1 - 7);
+        assert_eq!(matrix[0][1], 2 + 8);
+        assert_eq!(matrix[0][2], 3 / 9);
+        assert_eq!(matrix[1][0], 4 * 10);
+        assert_eq!(matrix[1][1], 5 % 11);
+        assert_eq!(matrix[1][2], 12);
     }
 }
