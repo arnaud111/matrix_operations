@@ -559,11 +559,13 @@ impl<T: Default + Copy + Mul<Output = T> + AddAssign<<T as Mul>::Output>> Matrix
             return Err("Matrix shapes are not compatible for dot product".into());
         }
         let mut matrix = Matrix::default((self.shape.0, other.shape.1));
-        for i in 0..self.shape.0 {
-            for j in 0..other.shape.1 {
-                for k in 0..self.shape.1 {
-                    matrix[i][j] += self[i][k] * other[k][j];
-                }
+        let mut row_self;
+        let mut col_other;
+        for i in 0..matrix.data.len() {
+            row_self = i / matrix.shape.1 * self.shape.1;
+            col_other = i % matrix.shape.1;
+            for j in 0..self.shape.1 {
+                matrix.data[i] += self.data[row_self + j] * other.data[j * other.shape.1 + col_other];
             }
         }
         Ok(matrix)
