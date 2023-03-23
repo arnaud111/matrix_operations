@@ -1,18 +1,33 @@
 use std::error::Error;
 
-pub struct Matrix<T, const N: usize> {
-    data: [T; N],
+pub struct Matrix<T> {
+    data: Vec<T>,
     shape: (usize, usize),
 }
 
-impl<T, const N: usize> Matrix<T, N> {
-    pub fn new(data: [T; N], shape: (usize, usize)) -> Result<Matrix<T, N>, Box<dyn Error>> {
-        if (shape.0 * shape.1) != N {
-            return Err("Invalid shape".into());
+impl<T: Default + std::marker::Copy> Matrix<T> {
+
+    pub fn new(data: Vec<T>, shape: (usize, usize)) -> Result<Matrix<T>, Box<dyn Error>> {
+        if data.len() != shape.0 * shape.1 {
+            return Err("Data length does not match shape".into());
+        }
+        Ok(Matrix { data, shape })
+    }
+
+    pub fn default(shape: (usize, usize)) -> Matrix<T> {
+        Matrix {
+            data: vec![T::default(); shape.0 * shape.1],
+            shape,
+        }
+    }
+
+    pub fn from_slice(data: &[T], shape: (usize, usize)) -> Result<Matrix<T>, Box<dyn Error>> {
+        if data.len() != shape.0 * shape.1 {
+            return Err("Data length does not match shape".into());
         }
         Ok(Matrix {
-            data,
-            shape
+            data: data.to_vec(),
+            shape,
         })
     }
 }
@@ -22,16 +37,44 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_matrix() {
-        let data = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-        let matrix = Matrix::new(data, (3, 3)).unwrap();
-        assert_eq!(matrix.shape, (3, 3));
+    fn test_new() {
+        let data = vec![1, 2, 3, 4, 5, 6];
+        let shape = (2, 3);
+        let matrix = Matrix::new(data, shape).unwrap();
+        assert_eq!(matrix.data, vec![1, 2, 3, 4, 5, 6]);
+        assert_eq!(matrix.shape, (2, 3));
     }
 
     #[test]
-    fn test_matrix_invalid_shape() {
-        let data = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-        let matrix = Matrix::new(data, (3, 4));
+    fn test_new_error() {
+        let data = vec![1, 2, 3, 4, 5, 6];
+        let shape = (3, 3);
+        let matrix = Matrix::new(data, shape);
+        assert!(matrix.is_err());
+    }
+
+    #[test]
+    fn test_default() {
+        let shape = (2, 3);
+        let matrix: Matrix<u32> = Matrix::default(shape);
+        assert_eq!(matrix.data, vec![0, 0, 0, 0, 0, 0]);
+        assert_eq!(matrix.shape, (2, 3));
+    }
+
+    #[test]
+    fn test_from_slice() {
+        let data = vec![1, 2, 3, 4, 5, 6];
+        let shape = (2, 3);
+        let matrix = Matrix::from_slice(&data, shape).unwrap();
+        assert_eq!(matrix.data, vec![1, 2, 3, 4, 5, 6]);
+        assert_eq!(matrix.shape, (2, 3));
+    }
+
+    #[test]
+    fn test_from_slice_error() {
+        let data = vec![1, 2, 3, 4, 5, 6];
+        let shape = (3, 3);
+        let matrix = Matrix::from_slice(&data, shape);
         assert!(matrix.is_err());
     }
 }
