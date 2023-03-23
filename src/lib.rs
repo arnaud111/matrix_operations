@@ -1,13 +1,15 @@
 pub mod operations;
 
 use std::error::Error;
+use std::fmt::{Display, Formatter};
+use std::ops::{Index, IndexMut};
 
 pub struct Matrix<T> {
     data: Vec<T>,
     shape: (usize, usize),
 }
 
-impl<T> std::ops::Index<usize> for Matrix<T> {
+impl<T> Index<usize> for Matrix<T> {
     type Output = [T];
 
     fn index(&self, index: usize) -> &Self::Output {
@@ -17,7 +19,7 @@ impl<T> std::ops::Index<usize> for Matrix<T> {
     }
 }
 
-impl<T> std::ops::IndexMut<usize> for Matrix<T> {
+impl<T> IndexMut<usize> for Matrix<T> {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         let start = index * self.shape.1;
         let end = start + self.shape.1;
@@ -25,11 +27,8 @@ impl<T> std::ops::IndexMut<usize> for Matrix<T> {
     }
 }
 
-impl<T> std::fmt::Display for Matrix<T>
-    where
-        T: std::fmt::Display,
-    {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl<T> Display for Matrix<T> where T: Display {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         let mut s = String::new();
         for i in 0..self.shape.0 {
             for j in 0..self.shape.1 {
@@ -41,7 +40,7 @@ impl<T> std::fmt::Display for Matrix<T>
     }
 }
 
-impl<T: Default + std::marker::Copy> Matrix<T> {
+impl<T: Default + Copy> Matrix<T> {
 
     pub fn new(data: Vec<T>, shape: (usize, usize)) -> Result<Matrix<T>, Box<dyn Error>> {
         if data.len() != shape.0 * shape.1 {

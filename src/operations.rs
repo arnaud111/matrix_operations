@@ -1,6 +1,8 @@
+use std::error::Error;
+use std::ops::{AddAssign, Mul};
 use crate::Matrix;
 
-impl<T: Default + std::marker::Copy> Matrix<T> {
+impl<T: Default + Copy> Matrix<T> {
 
     pub fn transpose(&self) -> Matrix<T> {
         let mut matrix = Matrix::default((self.shape.1, self.shape.0));
@@ -13,9 +15,9 @@ impl<T: Default + std::marker::Copy> Matrix<T> {
     }
 }
 
-impl<T: Default + std::marker::Copy + std::ops::Mul + std::ops::AddAssign<<T as std::ops::Mul>::Output>> Matrix<T> {
+impl<T: Default + Copy + Mul + AddAssign<<T as Mul>::Output>> Matrix<T> {
 
-    pub fn dot(&self, other: &Matrix<T>) -> Result<Matrix<T>, Box<dyn std::error::Error>> {
+    pub fn dot(&self, other: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
         if self.shape.1 != other.shape.0 {
             return Err("Matrix shapes are not compatible for dot product".into());
         }
