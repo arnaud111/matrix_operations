@@ -412,10 +412,8 @@ impl<T: Default + Copy> Matrix<T> {
     /// ```
     pub fn apply(&self, f: fn(T) -> T) -> Matrix<T> {
         let mut matrix = Matrix::default(self.shape);
-        for i in 0..self.shape.0 {
-            for j in 0..self.shape.1 {
-                matrix[i][j] = f(self[i][j]);
-            }
+        for i in 0..self.data.len() {
+            matrix.data[i] = f(self.data[i]);
         }
         matrix
     }
