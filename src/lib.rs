@@ -5,6 +5,16 @@ pub struct Matrix<T> {
     shape: (usize, usize),
 }
 
+impl<T> std::ops::Index<usize> for Matrix<T> {
+    type Output = [T];
+
+    fn index(&self, index: usize) -> &Self::Output {
+        let start = index * self.shape.1;
+        let end = start + self.shape.1;
+        &self.data[start..end]
+    }
+}
+
 impl<T: Default + std::marker::Copy> Matrix<T> {
 
     pub fn new(data: Vec<T>, shape: (usize, usize)) -> Result<Matrix<T>, Box<dyn Error>> {
@@ -76,5 +86,18 @@ mod tests {
         let shape = (3, 3);
         let matrix = Matrix::from_slice(&data, shape);
         assert!(matrix.is_err());
+    }
+
+    #[test]
+    fn test_index() {
+        let data = vec![1, 2, 3, 4, 5, 6];
+        let shape = (2, 3);
+        let matrix = Matrix::new(data, shape).unwrap();
+        assert_eq!(matrix[0][0], 1);
+        assert_eq!(matrix[0][1], 2);
+        assert_eq!(matrix[0][2], 3);
+        assert_eq!(matrix[1][0], 4);
+        assert_eq!(matrix[1][1], 5);
+        assert_eq!(matrix[1][2], 6);
     }
 }
