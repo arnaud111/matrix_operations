@@ -390,6 +390,48 @@ impl<T: Default + Copy> Matrix<T> {
         self.shape
     }
 
+    /// Returns the column of the matrix at the given index as a Vec
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let column = matrix.get_column(0).unwrap();
+    ///
+    /// assert_eq!(column, vec![1, 4]);
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// If the column index is out of bounds, an error will be returned
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let column = matrix.get_column(3);
+    ///
+    /// assert!(column.is_err());
+    /// ```
+    pub fn get_column(&self, column: usize) -> Result<Vec<T>, Box<dyn Error>> {
+        if column >= self.shape.1 {
+            return Err("Column index out of bounds".into());
+        }
+        let mut column_vec = Vec::new();
+        for i in 0..self.shape.0 {
+            column_vec.push(self.data[i * self.shape.1 + column]);
+        }
+        Ok(column_vec)
+    }
+
     /// Apply a function to each element of the matrix
     ///
     /// # Examples
