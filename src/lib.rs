@@ -46,6 +46,7 @@
 //! - Subtract two matrices
 //! - Apply a function to each element of a matrix (like multiplying by a scalar, or adding a constant)
 //! - Apply a function on each element of two matrices (like multiplying two matrices element by element)
+//! - Apply a function on each row or column of a matrix
 //!
 
 use std::error::Error;
