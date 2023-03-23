@@ -1095,6 +1095,34 @@ impl<T: Default + Copy + Add<Output = T>> Matrix<T> {
         }
         Ok(matrix)
     }
+
+    /// Add a scalar from a matrix
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let shape = (2, 3);
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let new_matrix = matrix.add_scalar(2);
+    ///
+    /// assert_eq!(new_matrix[0][0], 3);
+    /// assert_eq!(new_matrix[0][1], 4);
+    /// assert_eq!(new_matrix[0][2], 5);
+    /// assert_eq!(new_matrix[1][0], 6);
+    /// assert_eq!(new_matrix[1][1], 7);
+    /// assert_eq!(new_matrix[1][2], 8);
+    /// ```
+    pub fn add_scalar(&self, scalar: T) -> Matrix<T> {
+        let mut matrix = Matrix::default(self.shape);
+        for i in 0..self.data.len() {
+            matrix.data[i] = self.data[i] + scalar;
+        }
+        matrix
+    }
 }
 
 impl<T: Default + Copy + Sub<Output = T>> Matrix<T> {
