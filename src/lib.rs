@@ -1292,6 +1292,34 @@ impl<T: Default + Copy + Sub<Output = T>> Matrix<T> {
         }
         Ok(matrix)
     }
+
+    /// Subtract a scalar from a matrix
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let shape = (2, 3);
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let new_matrix = matrix.sub_scalar(2);
+    ///
+    /// assert_eq!(new_matrix[0][0], -1);
+    /// assert_eq!(new_matrix[0][1], 0);
+    /// assert_eq!(new_matrix[0][2], 1);
+    /// assert_eq!(new_matrix[1][0], 2);
+    /// assert_eq!(new_matrix[1][1], 3);
+    /// assert_eq!(new_matrix[1][2], 4);
+    /// ```
+    pub fn sub_scalar(&self, scalar: T) -> Matrix<T> {
+        let mut matrix = Matrix::default(self.shape);
+        for i in 0..self.data.len() {
+            matrix.data[i] = self.data[i] - scalar;
+        }
+        matrix
+    }
 }
 
 impl<T: Default + Copy + Div<Output = T>> Matrix<T> {
@@ -1458,10 +1486,10 @@ impl<T: Default + Copy + Div<Output = T>> Matrix<T> {
     /// assert_eq!(new_matrix[1][1], 2);
     /// assert_eq!(new_matrix[1][2], 3);
     /// ```
-    pub fn div_scalar(&self, other: T) -> Matrix<T> {
+    pub fn div_scalar(&self, scalar: T) -> Matrix<T> {
         let mut matrix = Matrix::default(self.shape);
         for i in 0..self.data.len() {
-            matrix.data[i] = self.data[i] / other;
+            matrix.data[i] = self.data[i] / scalar;
         }
         matrix
     }
