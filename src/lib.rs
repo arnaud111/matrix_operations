@@ -1,3 +1,5 @@
+pub mod operations;
+
 use std::error::Error;
 
 pub struct Matrix<T> {
@@ -86,6 +88,10 @@ impl<T: Default + std::marker::Copy> Matrix<T> {
             }
         }
         Ok(matrix)
+    }
+
+    pub fn shape(&self) -> (usize, usize) {
+        self.shape
     }
 }
 
