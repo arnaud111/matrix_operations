@@ -374,6 +374,23 @@ impl<T: Default + Copy> Matrix<T> {
         Ok(matrix)
     }
 
+    /// Returns the matrix as a 1 dimensional array
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// assert_eq!(matrix.as_slice(), [1, 2, 3, 4, 5, 6]);
+    /// ```
+    pub fn as_slice(&self) -> &[T] {
+        &self.data
+    }
+
     /// Returns the shape of the matrix
     ///
     /// # Examples
