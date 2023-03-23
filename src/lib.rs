@@ -64,6 +64,29 @@ impl<T: Default + std::marker::Copy> Matrix<T> {
             shape,
         })
     }
+
+    pub fn from_vec(data: Vec<T>, shape: (usize, usize)) -> Result<Matrix<T>, Box<dyn Error>> {
+        if data.len() != shape.0 * shape.1 {
+            return Err("Data length does not match shape".into());
+        }
+        Ok(Matrix { data, shape })
+    }
+
+    pub fn from_2d_vec(data: Vec<Vec<T>>) -> Result<Matrix<T>, Box<dyn Error>> {
+        let shape = (data.len(), data[0].len());
+        for i in 1..shape.0 {
+            if data[i].len() != shape.1 {
+                return Err("Data length does not match shape".into());
+            }
+        }
+        let mut matrix = Matrix::default(shape);
+        for i in 0..shape.0 {
+            for j in 0..shape.1 {
+                matrix[i][j] = data[i][j];
+            }
+        }
+        Ok(matrix)
+    }
 }
 
 #[cfg(test)]
@@ -109,6 +132,38 @@ mod tests {
         let data = vec![1, 2, 3, 4, 5, 6];
         let shape = (3, 3);
         let matrix = Matrix::from_slice(&data, shape);
+        assert!(matrix.is_err());
+    }
+
+    #[test]
+    fn test_from_vec() {
+        let data = vec![1, 2, 3, 4, 5, 6];
+        let shape = (2, 3);
+        let matrix = Matrix::from_vec(data, shape).unwrap();
+        assert_eq!(matrix.data, vec![1, 2, 3, 4, 5, 6]);
+        assert_eq!(matrix.shape, (2, 3));
+    }
+
+    #[test]
+    fn test_from_vec_error() {
+        let data = vec![1, 2, 3, 4, 5, 6];
+        let shape = (3, 3);
+        let matrix = Matrix::from_vec(data, shape);
+        assert!(matrix.is_err());
+    }
+
+    #[test]
+    fn test_from_2d_vec() {
+        let data = vec![vec![1, 2, 3], vec![4, 5, 6]];
+        let matrix = Matrix::from_2d_vec(data).unwrap();
+        assert_eq!(matrix.data, vec![1, 2, 3, 4, 5, 6]);
+        assert_eq!(matrix.shape, (2, 3));
+    }
+
+    #[test]
+    fn test_from_2d_vec_error() {
+        let data = vec![vec![1, 2, 3], vec![4, 5]];
+        let matrix = Matrix::from_2d_vec(data);
         assert!(matrix.is_err());
     }
 
