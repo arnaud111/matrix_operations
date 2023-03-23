@@ -1,5 +1,5 @@
 use std::error::Error;
-use std::ops::{Add, AddAssign, Div, Mul, Sub};
+use std::ops::{Add, AddAssign, Mul, Sub};
 use crate::Matrix;
 
 impl<T: Default + Copy> Matrix<T> {
@@ -72,6 +72,16 @@ impl<T: Default + Copy> Matrix<T> {
         for i in 0..self.shape.0 {
             for j in 0..self.shape.1 {
                 matrix[i][j] = f(self[i][j]);
+            }
+        }
+        matrix
+    }
+
+    pub fn apply_other(&self, other: &Matrix<T>, f: fn(T, T) -> T) -> Matrix<T> {
+        let mut matrix = Matrix::default(self.shape);
+        for i in 0..self.shape.0 {
+            for j in 0..self.shape.1 {
+                matrix[i][j] = f(self[i][j], other[i][j]);
             }
         }
         matrix
@@ -170,6 +180,19 @@ mod tests {
         for i in 0..m2.shape.0 {
             for j in 0..m2.shape.1 {
                 assert_eq!(m2[i][j], m3[i][j]);
+            }
+        }
+    }
+
+    #[test]
+    fn test_apply_other() {
+        let m1 = Matrix::from_2d_vec(vec![vec![1.0, 2.0, 3.0], vec![4.0, 5.0, 6.0]]).unwrap();
+        let m2 = Matrix::from_2d_vec(vec![vec![1.0, 4.0, 9.0], vec![16.0, 25.0, 36.0]]).unwrap();
+        let m3 = m1.apply_other(&m2, |x, y| x * y);
+        assert_eq!(m2.shape, m3.shape);
+        for i in 0..m2.shape.0 {
+            for j in 0..m2.shape.1 {
+                assert_eq!(m1[i][j] * m2[i][j], m3[i][j]);
             }
         }
     }
