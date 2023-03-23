@@ -460,6 +460,131 @@ impl<T: Default + Copy> Matrix<T> {
         matrix
     }
 
+    /// Apply a function to each element of a column of the matrix and return a new matrix
+    /// The function takes a Vec of the column elements and returns a Vec of the new column elements
+    /// The function must return a Vec of the same length as the column
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// fn sum_column(column: Vec<i32>) -> Vec<i32> {
+    ///    let sum = column.iter().sum();
+    ///    vec![sum; column.len()]
+    /// }
+    ///
+    /// let new_matrix = matrix.apply_to_column(sum_column).unwrap();
+    ///
+    /// assert_eq!(new_matrix[0][0], 5);
+    /// assert_eq!(new_matrix[0][1], 7);
+    /// assert_eq!(new_matrix[0][2], 9);
+    /// assert_eq!(new_matrix[1][0], 5);
+    /// assert_eq!(new_matrix[1][1], 7);
+    /// assert_eq!(new_matrix[1][2], 9);
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// If the function does not return a Vec of the same length as the column, an error will be returned
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// fn sum_column(column: Vec<i32>) -> Vec<i32> {
+    ///    let sum = column.iter().sum();
+    ///    vec![sum]
+    /// }
+    ///
+    /// let new_matrix = matrix.apply_to_column(sum_column);
+    ///
+    /// assert!(new_matrix.is_err());
+    /// ```
+    pub fn apply_to_column(&self, f: fn(Vec<T>) -> Vec<T>) -> Result<Matrix<T>, Box<dyn Error>> {
+        let mut matrix = Matrix::default(self.shape);
+        for i in 0..self.shape.1 {
+            let column = self.get_column(i).unwrap();
+            let new_column = f(column);
+            if new_column.len() != self.shape.0 {
+                return Err("Function did not return a Vec of the same length as the column".into());
+            }
+            for j in 0..self.shape.0 {
+                matrix.data[j * self.shape.1 + i] = new_column[j];
+            }
+        }
+        Ok(matrix)
+    }
+
+    /// Apply a function to each element of a row of the matrix and return a new matrix
+    /// The function takes a Vec of the row elements and returns a Vec of the new row elements
+    /// The function must return a Vec of the same length as the row
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// fn sum_row(row: Vec<i32>) -> Vec<i32> {
+    ///    let sum = row.iter().sum();
+    ///    vec![sum; row.len()]
+    /// }
+    ///
+    /// let new_matrix = matrix.apply_to_row(sum_row).unwrap();
+    ///
+    /// assert_eq!(new_matrix[0][0], 6);
+    /// assert_eq!(new_matrix[0][1], 6);
+    /// assert_eq!(new_matrix[0][2], 6);
+    /// assert_eq!(new_matrix[1][0], 15);
+    /// assert_eq!(new_matrix[1][1], 15);
+    /// assert_eq!(new_matrix[1][2], 15);
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// If the function does not return a Vec of the same length as the row, an error will be returned
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// fn sum_row(row: Vec<i32>) -> Vec<i32> {
+    ///    let sum = row.iter().sum();
+    ///    vec![sum]
+    /// }
+    ///
+    /// let new_matrix = matrix.apply_to_row(sum_row);
+    ///
+    /// assert!(new_matrix.is_err());
+    /// ```
+    pub fn apply_to_row(&self, f: fn(Vec<T>) -> Vec<T>) -> Result<Matrix<T>, Box<dyn Error>> {
+        let mut matrix = Matrix::default(self.shape);
+        for i in 0..self.shape.0 {
+            let new_row = f(self[i].to_vec());
+            if new_row.len() != self.shape.1 {
+                return Err("Function did not return a Vec of the same length as the row".into());
+            }
+            for j in 0..self.shape.1 {
+                matrix.data[i * self.shape.1 + j] = new_row[j];
+            }
+        }
+        Ok(matrix)
+    }
+
     /// Apply a function to each element of two matrices and return a new matrix
     ///
     /// # Examples
