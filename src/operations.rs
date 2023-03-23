@@ -31,29 +31,6 @@ impl<T: Default + Copy + Mul<Output = T> + AddAssign<<T as Mul>::Output>> Matrix
         }
         Ok(matrix)
     }
-
-    pub fn multiply_by_value(&self, value: T) -> Matrix<T> {
-        let mut matrix = Matrix::default(self.shape);
-        for i in 0..self.shape.0 {
-            for j in 0..self.shape.1 {
-                matrix[i][j] = self[i][j] * value;
-            }
-        }
-        matrix
-    }
-
-    pub fn multiply_one_by_one(&self, other: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
-        if self.shape != other.shape {
-            return Err("Matrix shapes are not compatible for element-wise multiplication".into());
-        }
-        let mut matrix = Matrix::default(self.shape);
-        for i in 0..self.shape.0 {
-            for j in 0..self.shape.1 {
-                matrix[i][j] = self[i][j] * other[i][j];
-            }
-        }
-        Ok(matrix)
-    }
 }
 
 impl<T: Default + Copy + Add<Output = T>> Matrix<T> {
@@ -69,16 +46,6 @@ impl<T: Default + Copy + Add<Output = T>> Matrix<T> {
             }
         }
         Ok(matrix)
-    }
-
-    pub fn add_value(&self, value: T) -> Matrix<T> {
-        let mut matrix = Matrix::default(self.shape);
-        for i in 0..self.shape.0 {
-            for j in 0..self.shape.1 {
-                matrix[i][j] = self[i][j] + value;
-            }
-        }
-        matrix
     }
 }
 
@@ -96,51 +63,18 @@ impl<T: Default + Copy + Sub<Output = T>> Matrix<T> {
         }
         Ok(matrix)
     }
-
-    pub fn sub_value(&self, value: T) -> Matrix<T> {
-        let mut matrix = Matrix::default(self.shape);
-        for i in 0..self.shape.0 {
-            for j in 0..self.shape.1 {
-                matrix[i][j] = self[i][j] - value;
-            }
-        }
-        matrix
-    }
-
-    pub fn value_sub(&self, value: T) -> Matrix<T> {
-        let mut matrix = Matrix::default(self.shape);
-        for i in 0..self.shape.0 {
-            for j in 0..self.shape.1 {
-                matrix[i][j] = value - self[i][j];
-            }
-        }
-        matrix
-    }
 }
 
-impl<T: Default + Copy + Div<Output = T>> Matrix<T> {
+impl<T: Default + Copy> Matrix<T> {
 
-    pub fn div_by_value(&self, value: T) -> Matrix<T> {
+    pub fn apply(&self, f: fn(T) -> T) -> Matrix<T> {
         let mut matrix = Matrix::default(self.shape);
         for i in 0..self.shape.0 {
             for j in 0..self.shape.1 {
-                matrix[i][j] = self[i][j] / value;
+                matrix[i][j] = f(self[i][j]);
             }
         }
         matrix
-    }
-
-    pub fn div_one_by_one(&self, other: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
-        if self.shape != other.shape {
-            return Err("Matrix shapes are not compatible for element-wise multiplication".into());
-        }
-        let mut matrix = Matrix::default(self.shape);
-        for i in 0..self.shape.0 {
-            for j in 0..self.shape.1 {
-                matrix[i][j] = self[i][j] / other[i][j];
-            }
-        }
-        Ok(matrix)
     }
 }
 
@@ -228,111 +162,15 @@ mod tests {
     }
 
     #[test]
-    fn test_multiply_by_value() {
-        let m1 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
-        let m2 = Matrix::from_2d_vec(vec![vec![2, 4, 6], vec![8, 10, 12]]).unwrap();
-        let m3 = m1.multiply_by_value(2);
-        assert_eq!(m2.shape, m3.shape);
-        for i in 0..m2.shape.0 {
-            for j in 0..m2.shape.1 {
-                assert_eq!(m2[i][j], m3[i][j]);
-            }
-        }
-    }
-
-    #[test]
-    fn test_add_value() {
-        let m1 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
-        let m2 = Matrix::from_2d_vec(vec![vec![2, 3, 4], vec![5, 6, 7]]).unwrap();
-        let m3 = m1.add_value(1);
-        assert_eq!(m2.shape, m3.shape);
-        for i in 0..m2.shape.0 {
-            for j in 0..m2.shape.1 {
-                assert_eq!(m2[i][j], m3[i][j]);
-            }
-        }
-    }
-
-    #[test]
-    fn test_sub_value() {
-        let m1 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
-        let m2 = Matrix::from_2d_vec(vec![vec![0, 1, 2], vec![3, 4, 5]]).unwrap();
-        let m3 = m1.sub_value(1);
-        assert_eq!(m2.shape, m3.shape);
-        for i in 0..m2.shape.0 {
-            for j in 0..m2.shape.1 {
-                assert_eq!(m2[i][j], m3[i][j]);
-            }
-        }
-    }
-
-    #[test]
-    fn test_value_sub() {
-        let m1 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
-        let m2 = Matrix::from_2d_vec(vec![vec![0, -1, -2], vec![-3, -4, -5]]).unwrap();
-        let m3 = m1.value_sub(1);
-        assert_eq!(m2.shape, m3.shape);
-        for i in 0..m2.shape.0 {
-            for j in 0..m2.shape.1 {
-                assert_eq!(m2[i][j], m3[i][j]);
-            }
-        }
-    }
-
-    #[test]
-    fn test_div_by_value() {
+    fn test_apply() {
         let m1 = Matrix::from_2d_vec(vec![vec![1.0, 2.0, 3.0], vec![4.0, 5.0, 6.0]]).unwrap();
-        let m2 = Matrix::from_2d_vec(vec![vec![0.5, 1.0, 1.5], vec![2.0, 2.5, 3.0]]).unwrap();
-        let m3 = m1.div_by_value(2.0);
+        let m2 = Matrix::from_2d_vec(vec![vec![1.0, 4.0, 9.0], vec![16.0, 25.0, 36.0]]).unwrap();
+        let m3 = m1.apply(|x| x * x);
         assert_eq!(m2.shape, m3.shape);
         for i in 0..m2.shape.0 {
             for j in 0..m2.shape.1 {
                 assert_eq!(m2[i][j], m3[i][j]);
             }
         }
-    }
-
-    #[test]
-    fn test_multiply_one_by_one() {
-        let m1 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
-        let m2 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
-        let m3 = Matrix::from_2d_vec(vec![vec![1, 4, 9], vec![16, 25, 36]]).unwrap();
-        let m4 = m1.multiply_one_by_one(&m2).unwrap();
-        assert_eq!(m3.shape, m4.shape);
-        for i in 0..m3.shape.0 {
-            for j in 0..m3.shape.1 {
-                assert_eq!(m3[i][j], m4[i][j]);
-            }
-        }
-    }
-
-    #[test]
-    fn test_multiply_one_by_one_error() {
-        let m1 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
-        let m2 = Matrix::from_2d_vec(vec![vec![1, 2], vec![4, 5]]).unwrap();
-        let m3 = m1.multiply_one_by_one(&m2);
-        assert!(m3.is_err());
-    }
-
-    #[test]
-    fn test_div_one_by_one() {
-        let m1 = Matrix::from_2d_vec(vec![vec![1, 4, 9], vec![16, 25, 36]]).unwrap();
-        let m2 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
-        let m3 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
-        let m4 = m1.div_one_by_one(&m2).unwrap();
-        assert_eq!(m3.shape, m4.shape);
-        for i in 0..m3.shape.0 {
-            for j in 0..m3.shape.1 {
-                assert_eq!(m3[i][j], m4[i][j]);
-            }
-        }
-    }
-
-    #[test]
-    fn test_div_one_by_one_error() {
-        let m1 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
-        let m2 = Matrix::from_2d_vec(vec![vec![1, 2], vec![4, 5]]).unwrap();
-        let m3 = m1.div_one_by_one(&m2);
-        assert!(m3.is_err());
     }
 }
