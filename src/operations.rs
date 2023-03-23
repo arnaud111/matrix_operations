@@ -32,11 +32,11 @@ impl<T: Default + Copy + Mul<Output = T> + AddAssign<<T as Mul>::Output>> Matrix
         Ok(matrix)
     }
 
-    pub fn multiply_by_number(&self, number: T) -> Matrix<T> {
+    pub fn multiply_by_value(&self, value: T) -> Matrix<T> {
         let mut matrix = Matrix::default(self.shape);
         for i in 0..self.shape.0 {
             for j in 0..self.shape.1 {
-                matrix[i][j] = self[i][j] * number;
+                matrix[i][j] = self[i][j] * value;
             }
         }
         matrix
@@ -159,10 +159,10 @@ mod tests {
     }
 
     #[test]
-    fn test_multiply_by_number() {
+    fn test_multiply_by_value() {
         let m1 = Matrix::from_2d_vec(vec![vec![1, 2, 3], vec![4, 5, 6]]).unwrap();
         let m2 = Matrix::from_2d_vec(vec![vec![2, 4, 6], vec![8, 10, 12]]).unwrap();
-        let m3 = m1.multiply_by_number(2);
+        let m3 = m1.multiply_by_value(2);
         assert_eq!(m2.shape, m3.shape);
         for i in 0..m2.shape.0 {
             for j in 0..m2.shape.1 {
