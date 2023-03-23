@@ -491,6 +491,68 @@ impl<T: Default + Copy> Matrix<T> {
         Ok(self[row].to_vec())
     }
 
+    /// Add a column to the matrix
+    /// The column will be added to the index specified
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let new_matrix = matrix.append_column(1).unwrap();
+    ///
+    /// assert_eq!(new_matrix.shape(), (2, 4));
+    /// assert_eq!(new_matrix.as_slice(), [1, 0, 2, 3, 4, 0, 5, 6]);
+    /// ```
+    ///
+    /// If the index is greater than the number of columns, the column will be added to the end
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let new_matrix = matrix.append_column(3).unwrap();
+    ///
+    /// assert_eq!(new_matrix.shape(), (2, 4));
+    /// assert_eq!(new_matrix.as_slice(), [1, 2, 3, 0, 4, 5, 6, 0]);
+    /// ```
+    ///
+    /// If the matrix is empty, a new matrix will be created with the column
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data: Vec<u32> = Vec::new();
+    /// let shape = (0, 0);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let new_matrix = matrix.append_column(0).unwrap();
+    ///
+    /// assert_eq!(new_matrix.shape(), (1, 1));
+    /// assert_eq!(new_matrix.as_slice(), [0]);
+    /// ```
+    pub fn append_column(&self, index: usize) -> Result<Matrix<T>, Box<dyn Error>> {
+        let mut new_data = Vec::new();
+        if self.data.len() == 0 {
+            return Matrix::new(vec![T::default()], (1, 1));
+        }
+        for i in 0..self.data.len() {
+            if i % self.shape.1 == index {
+                new_data.push(T::default());
+            }
+            new_data.push(self.data[i]);
+            if index > self.shape.1 - 1 && i % self.shape.1 == self.shape.1 - 1 {
+                new_data.push(T::default());
+            }
+        }
+        Matrix::new(new_data, (self.shape.0, self.shape.1 + 1))
+    }
+
     /// Apply a function to each element of the matrix
     ///
     /// # Examples
