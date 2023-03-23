@@ -1437,4 +1437,32 @@ impl<T: Default + Copy + Div<Output = T>> Matrix<T> {
         }
         Ok(matrix)
     }
+
+    /// Divide a scalar from a matrix
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let shape = (2, 3);
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let new_matrix = matrix.div_scalar(2);
+    ///
+    /// assert_eq!(new_matrix[0][0], 0);
+    /// assert_eq!(new_matrix[0][1], 1);
+    /// assert_eq!(new_matrix[0][2], 1);
+    /// assert_eq!(new_matrix[1][0], 2);
+    /// assert_eq!(new_matrix[1][1], 2);
+    /// assert_eq!(new_matrix[1][2], 3);
+    /// ```
+    pub fn div_scalar(&self, other: T) -> Matrix<T> {
+        let mut matrix = Matrix::default(self.shape);
+        for i in 0..self.data.len() {
+            matrix.data[i] = self.data[i] / other;
+        }
+        matrix
+    }
 }
