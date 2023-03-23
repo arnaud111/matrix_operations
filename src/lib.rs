@@ -23,6 +23,22 @@ impl<T> std::ops::IndexMut<usize> for Matrix<T> {
     }
 }
 
+impl<T> std::fmt::Display for Matrix<T>
+    where
+        T: std::fmt::Display,
+    {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut s = String::new();
+        for i in 0..self.shape.0 {
+            for j in 0..self.shape.1 {
+                s.push_str(&format!("{} ", self[i][j]));
+            }
+            s.push_str("\n");
+        }
+        write!(f, "{}", s)
+    }
+}
+
 impl<T: Default + std::marker::Copy> Matrix<T> {
 
     pub fn new(data: Vec<T>, shape: (usize, usize)) -> Result<Matrix<T>, Box<dyn Error>> {
@@ -126,5 +142,13 @@ mod tests {
         assert_eq!(matrix[1][0], 4 * 10);
         assert_eq!(matrix[1][1], 5 % 11);
         assert_eq!(matrix[1][2], 12);
+    }
+
+    #[test]
+    fn test_display() {
+        let data = vec![1, 2, 3, 4, 5, 6];
+        let shape = (2, 3);
+        let matrix = Matrix::new(data, shape).unwrap();
+        assert_eq!(format!("{}", matrix), "1 2 3 \n4 5 6 \n");
     }
 }
