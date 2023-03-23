@@ -41,12 +41,13 @@
 //!
 //! - Create a matrix
 //! - Transpose a matrix
-//! - Multiply two matrices
-//! - Add two matrices
-//! - Subtract two matrices
+//! - Multiply / Add / Subtract two matrices
+//! - Multiply / Divide / Add / Subtract a matrix by a scalar
+//! - Multiply / Divide / Add / Subtract a matrix each rows / columns by another row / column
 //! - Apply a function to each element of a matrix (like multiplying by a scalar, or adding a constant)
 //! - Apply a function on each element of two matrices (like multiplying two matrices element by element)
 //! - Apply a function on each row or column of a matrix
+//! - Get a matrix as a slice
 //!
 
 use std::error::Error;
@@ -450,6 +451,44 @@ impl<T: Default + Copy> Matrix<T> {
             column_vec.push(self.data[i * self.shape.1 + column]);
         }
         Ok(column_vec)
+    }
+
+    /// Returns the row of the matrix at the given index as a Vec
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let row = matrix.get_row(0).unwrap();
+    ///
+    /// assert_eq!(row, vec![1, 2, 3]);
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// If the row index is out of bounds, an error will be returned
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let row = matrix.get_row(2);
+    ///
+    /// assert!(row.is_err());
+    /// ```
+    pub fn get_row(&self, row: usize) -> Result<Vec<T>, Box<dyn Error>> {
+        if row >= self.shape.0 {
+            return Err("Row index out of bounds".into());
+        }
+        Ok(self[row].to_vec())
     }
 
     /// Apply a function to each element of the matrix
