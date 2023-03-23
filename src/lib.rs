@@ -553,6 +553,69 @@ impl<T: Default + Copy> Matrix<T> {
         Matrix::new(new_data, (self.shape.0, self.shape.1 + 1))
     }
 
+    /// Add a column to the matrix
+    /// The column will be added to the index specified
+    /// The values of the column will be initialized to the value specified
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let new_matrix = matrix.append_column_initialized(1, 10).unwrap();
+    ///
+    /// assert_eq!(new_matrix.shape(), (2, 4));
+    /// assert_eq!(new_matrix.as_slice(), [1, 10, 2, 3, 4, 10, 5, 6]);
+    /// ```
+    ///
+    /// If the index is greater than the number of columns, the column will be added to the end
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let new_matrix = matrix.append_column_initialized(3, 10).unwrap();
+    ///
+    /// assert_eq!(new_matrix.shape(), (2, 4));
+    /// assert_eq!(new_matrix.as_slice(), [1, 2, 3, 10, 4, 5, 6, 10]);
+    /// ```
+    ///
+    /// If the matrix is empty, a new matrix will be created with the column
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data: Vec<u32> = Vec::new();
+    /// let shape = (0, 0);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let new_matrix = matrix.append_column_initialized(0, 10).unwrap();
+    ///
+    /// assert_eq!(new_matrix.shape(), (1, 1));
+    /// assert_eq!(new_matrix.as_slice(), [10]);
+    /// ```
+    pub fn append_column_initialized(&self, index: usize, value: T) -> Result<Matrix<T>, Box<dyn Error>> {
+        if self.data.len() == 0 {
+            return Matrix::new(vec![value], (1, 1));
+        }
+        let mut new_data = Vec::new();
+        for i in 0..self.data.len() {
+            if i % self.shape.1 == index {
+                new_data.push(value);
+            }
+            new_data.push(self.data[i]);
+            if index > self.shape.1 - 1 && i % self.shape.1 == self.shape.1 - 1 {
+                new_data.push(value);
+            }
+        }
+        Matrix::new(new_data, (self.shape.0, self.shape.1 + 1))
+    }
+
     /// Add a row to the matrix
     /// The row will be added to the index specified
     /// If the index is greater than the number of rows, the row will be added to the end
