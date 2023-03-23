@@ -54,8 +54,8 @@ use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Sub};
 
 /// A matrix struct that can be used to perform matrix operations.
 pub struct Matrix<T> {
-    data: Vec<T>,
-    shape: (usize, usize),
+    pub(crate) data: Vec<T>,
+    pub(crate) shape: (usize, usize),
 }
 
 /// Allows the matrix to be indexed as a 2-dimensional array
@@ -467,7 +467,7 @@ impl<T: Default + Copy> Matrix<T> {
     /// ```
     pub fn apply_other(&self, other: &Matrix<T>, f: fn(T, T) -> T) -> Result<Matrix<T>, Box<dyn Error>> {
         if self.shape != other.shape {
-            return Err("Matrix shapes are not compatible for addition".into());
+            return Err("Matrix shapes are not compatible to apply function".into());
         }
         let mut matrix = Matrix::default(self.shape);
         for i in 0..self.shape.0 {
@@ -618,10 +618,8 @@ impl<T: Default + Copy + Add<Output = T>> Matrix<T> {
             return Err("Matrix shapes are not compatible for addition".into());
         }
         let mut matrix = Matrix::default(self.shape);
-        for i in 0..self.shape.0 {
-            for j in 0..self.shape.1 {
-                matrix[i][j] = self[i][j] + other[i][j];
-            }
+        for i in 0..self.data.len() {
+            matrix.data[i] = self.data[i] + other.data[i];
         }
         Ok(matrix)
     }
@@ -672,13 +670,11 @@ impl<T: Default + Copy + Sub<Output = T>> Matrix<T> {
     /// ```
     pub fn sub(&self, other: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
         if self.shape != other.shape {
-            return Err("Matrix shapes are not compatible for addition".into());
+            return Err("Matrix shapes are not compatible for subtraction".into());
         }
         let mut matrix = Matrix::default(self.shape);
-        for i in 0..self.shape.0 {
-            for j in 0..self.shape.1 {
-                matrix[i][j] = self[i][j] - other[i][j];
-            }
+        for i in 0..self.data.len() {
+            matrix.data[i] = self.data[i] - other.data[i];
         }
         Ok(matrix)
     }
