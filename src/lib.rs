@@ -658,6 +658,79 @@ impl<T: Default + Copy> Matrix<T> {
         Ok(())
     }
 
+    /// Add a column to the matrix
+    /// The column will be added to the index specified
+    /// The values of the column will be initialized to the values specified
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// matrix.add_column_from_vec(0, vec![10, 20]).unwrap();
+    ///
+    /// assert_eq!(matrix.shape(), (2, 4));
+    /// assert_eq!(matrix.as_slice(), [10, 1, 2, 3, 20, 4, 5, 6]);
+    ///
+    /// matrix.add_column_from_vec(matrix.shape().1, vec![30, 40]).unwrap();
+    ///
+    /// assert_eq!(matrix.shape(), (2, 5));
+    /// assert_eq!(matrix.as_slice(), [10, 1, 2, 3, 30, 20, 4, 5, 6, 40]);
+    /// ```
+    ///
+    /// If the matrix is empty, a new matrix will be created with the column
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data: Vec<u32> = Vec::new();
+    /// let shape = (0, 0);
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// matrix.add_column_from_vec(0, vec![10, 20]).unwrap();
+    ///
+    /// assert_eq!(matrix.shape(), (2, 1));
+    /// assert_eq!(matrix.as_slice(), [10, 20]);
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// If the column index is out of bounds, an error will be returned
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let result = matrix.add_column_from_vec(4, vec![10, 20]);
+    ///
+    /// assert!(result.is_err());
+    /// ```
+    pub fn add_column_from_vec(&mut self, index: usize, values: Vec<T>) -> Result<(), Box<dyn Error>> {
+        if index > self.shape.1 {
+            return Err("Column index out of bounds".into());
+        }
+        if self.shape.0 == 0 {
+            self.shape.0 = values.len();
+            self.shape.1 = 1;
+            self.data = values;
+            return Ok(());
+        }
+        if values.len() != self.shape.0 {
+            return Err("Values length does not match matrix height".into());
+        }
+        self.shape.1 += 1;
+        for i in 0..self.shape.0 {
+            self.data.insert((i * self.shape.1) + index, values[i]);
+        }
+        Ok(())
+    }
+
     /// Add a row to the matrix
     /// The row will be added to the index specified
     ///
