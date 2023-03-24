@@ -1088,4 +1088,49 @@ impl<T: Default + Copy> Matrix<T> {
         }
         Ok(())
     }
+
+    /// Remove a row from the matrix
+    /// The row will be removed from the index specified
+    /// The shape of the matrix will be updated
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6, 10, 10, 10, 20, 20, 20];
+    /// let shape = (4, 3);
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// matrix.remove_row(2).unwrap();
+    ///
+    /// assert_eq!(matrix.shape(), (3, 3));
+    /// assert_eq!(matrix.as_slice(), [1, 2, 3, 4, 5, 6, 20, 20, 20]);
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// If the row index is out of bounds, an error will be returned
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6, 10, 10, 10, 20, 20, 20];
+    /// let shape = (4, 3);
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let result = matrix.remove_row(4);
+    ///
+    /// assert!(result.is_err());
+    /// ```
+    pub fn remove_row(&mut self, index: usize) -> Result<(), Box<dyn Error>> {
+        if index >= self.shape.0 {
+            return Err("Row index out of bounds".into());
+        }
+        self.shape.0 -= 1;
+        for _ in 0..self.shape.1 {
+            self.data.remove(index * self.shape.1);
+        }
+        Ok(())
+    }
 }
