@@ -209,14 +209,14 @@ pub fn add_matrix_with_row<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::additions::add_scalar;
+/// use matrix_operations::additions::add_matrix_with_scalar;
 /// use matrix_operations::Matrix;
 ///
 /// let shape = (2, 3);
 /// let data = vec![1, 2, 3, 4, 5, 6];
 /// let matrix = Matrix::new(data, shape).unwrap();
 ///
-/// let new_matrix = add_scalar(&matrix, 2);
+/// let new_matrix = add_matrix_with_scalar(&matrix, 2);
 ///
 /// assert_eq!(new_matrix[0][0], 3);
 /// assert_eq!(new_matrix[0][1], 4);
@@ -225,7 +225,7 @@ pub fn add_matrix_with_row<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<
 /// assert_eq!(new_matrix[1][1], 7);
 /// assert_eq!(new_matrix[1][2], 8);
 /// ```
-pub fn add_scalar<T: Copy + Add<Output = T> + Default>(terms: &Matrix<T>, scalar: T) -> Matrix<T> {
+pub fn add_matrix_with_scalar<T: Copy + Add<Output = T> + Default>(terms: &Matrix<T>, scalar: T) -> Matrix<T> {
     let mut result = Matrix::default(terms.shape);
     for i in 0..terms.data.len() {
         result.data[i] = terms.data[i] + scalar;
