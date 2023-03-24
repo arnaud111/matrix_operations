@@ -1,7 +1,7 @@
 //! This module contains functions for matrix operations
 
 use std::error::Error;
-use std::ops::{Add, Div, Sub};
+use std::ops::{Add, AddAssign, Div, Mul, Sub};
 use crate::Matrix;
 
 /// Transpose the matrix
@@ -741,4 +741,94 @@ pub fn sub_matrix_with_scalar<T: Default + Copy + Sub<Output = T>>(matrix: &Matr
         result.data[i] = matrix.data[i] - scalar;
     }
     result
+}
+
+/// Multiply a scalar from a matrix
+///
+/// # Examples
+///
+/// ```
+/// use matrix_operations::Matrix;
+/// use matrix_operations::operations::mul_matrix_with_scalar;
+///
+/// let shape = (2, 3);
+/// let data = vec![1, 2, 3, 4, 5, 6];
+/// let matrix = Matrix::new(data, shape).unwrap();
+///
+/// let new_matrix = mul_matrix_with_scalar(&matrix, 2);
+///
+/// assert_eq!(new_matrix[0][0], 2);
+/// assert_eq!(new_matrix[0][1], 4);
+/// assert_eq!(new_matrix[0][2], 6);
+/// assert_eq!(new_matrix[1][0], 8);
+/// assert_eq!(new_matrix[1][1], 10);
+/// assert_eq!(new_matrix[1][2], 12);
+/// ```
+pub fn mul_matrix_with_scalar<T: Default + Copy + Mul<Output = T>>(matrix: &Matrix<T>, scalar: T) -> Matrix<T> {
+    let mut result = Matrix::default(matrix.shape);
+    for i in 0..matrix.data.len() {
+        result.data[i] = matrix.data[i] * scalar;
+    }
+    result
+}
+
+/// Multiply two matrices together
+///
+/// # Examples
+///
+/// ```
+/// use matrix_operations::Matrix;
+/// use matrix_operations::operations::dot_matrices;
+///
+/// let shape1 = (2, 3);
+/// let data1 = vec![1, 2, 3, 4, 5, 6];
+/// let matrix1 = Matrix::new(data1, shape1).unwrap();
+///
+/// let shape2 = (3, 2);
+/// let data2 = vec![1, 2, 3, 4, 5, 6];
+/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+///
+/// let new_matrix = dot_matrices(&matrix1, &matrix2).unwrap();
+///
+/// assert_eq!(new_matrix[0][0], 22);
+/// assert_eq!(new_matrix[0][1], 28);
+/// assert_eq!(new_matrix[1][0], 49);
+/// assert_eq!(new_matrix[1][1], 64);
+/// ```
+///
+/// # Errors
+///
+/// If the matrices are not compatible for multiplication, an error will be returned
+///
+/// ```
+/// use matrix_operations::Matrix;
+/// use matrix_operations::operations::dot_matrices;
+///
+/// let shape1 = (2, 3);
+/// let data1 = vec![1, 2, 3, 4, 5, 6];
+/// let matrix1 = Matrix::new(data1, shape1).unwrap();
+///
+/// let shape2 = (2, 3);
+/// let data2 = vec![1, 2, 3, 4, 5, 6];
+/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+///
+/// let new_matrix = dot_matrices(&matrix1, &matrix2);
+///
+/// assert!(new_matrix.is_err());
+/// ```
+pub fn dot_matrices<T: Default + Copy + Mul<Output = T> + AddAssign<<T as Mul>::Output>>(matrix1: &Matrix<T>, matrix2: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
+    if matrix1.shape.1 != matrix2.shape.0 {
+        return Err("Matrix shapes are not compatible for dot product".into());
+    }
+    let mut result = Matrix::default((matrix1.shape.0, matrix2.shape.1));
+    let mut row_matrix1;
+    let mut col_matrix2;
+    for i in 0..result.data.len() {
+        row_matrix1 = i / result.shape.1 * matrix1.shape.1;
+        col_matrix2 = i % result.shape.1;
+        for j in 0..matrix1.shape.1 {
+            result.data[i] += matrix1.data[row_matrix1 + j] * matrix2.data[j * matrix2.shape.1 + col_matrix2];
+        }
+    }
+    Ok(result)
 }
