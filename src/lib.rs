@@ -28,6 +28,7 @@
 
 pub mod operations;
 pub mod csv;
+mod macro_matrix;
 
 use std::error::Error;
 use std::fmt::{Display, Formatter};
