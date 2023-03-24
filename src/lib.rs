@@ -1178,4 +1178,28 @@ impl<T: Default + Copy> Matrix<T> {
         }
         Ok(())
     }
+
+    /// Change the type of the matrix
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let mut matrix: Matrix<u16> = Matrix::new(data, shape).unwrap();
+    ///
+    /// let new_matrix: Matrix<f32> = matrix.as_type::<f32>();
+    ///
+    /// assert_eq!(new_matrix.shape(), (2, 3));
+    /// assert_eq!(new_matrix.as_slice(), [1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
+    /// ```
+    pub fn as_type<U: From<T> + Copy + Default>(&mut self) -> Matrix<U> {
+        let mut data: Vec<U> = Vec::new();
+        for i in 0..self.data.len() {
+            data.push(U::from(self.data[i]));
+        }
+        Matrix::new(data, self.shape).unwrap()
+    }
 }
