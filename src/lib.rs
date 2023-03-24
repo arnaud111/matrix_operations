@@ -747,7 +747,7 @@ impl<T: Default + Copy> Matrix<T> {
     /// let shape2 = (2, 2);
     /// let matrix2 = Matrix::new(data2, shape2).unwrap();
     ///
-    /// matrix.add_column_from_matrix(&matrix2).unwrap();
+    /// matrix.add_columns_from_matrix(&matrix2).unwrap();
     /// assert_eq!(matrix.shape(), (2, 5));
     /// assert_eq!(matrix.as_slice(), [1, 2, 3, 10, 20, 4, 5, 6, 30, 40]);
     /// ```
@@ -764,7 +764,7 @@ impl<T: Default + Copy> Matrix<T> {
     /// let shape2 = (2, 1);
     /// let matrix2 = Matrix::new(data2, shape2).unwrap();
     ///
-    /// matrix.add_column_from_matrix(&matrix2).unwrap();
+    /// matrix.add_columns_from_matrix(&matrix2).unwrap();
     ///
     /// assert_eq!(matrix.shape(), (2, 1));
     /// assert_eq!(matrix.as_slice(), [10, 20]);
@@ -785,11 +785,11 @@ impl<T: Default + Copy> Matrix<T> {
     /// let shape2 = (3, 1);
     /// let matrix2 = Matrix::new(data2, shape2).unwrap();
     ///
-    /// let result = matrix.add_column_from_matrix(&matrix2);
+    /// let result = matrix.add_columns_from_matrix(&matrix2);
     ///
     /// assert!(result.is_err());
     /// ```
-    pub fn add_column_from_matrix(&mut self, matrix: &Matrix<T>) -> Result<(), Box<dyn Error>> {
+    pub fn add_columns_from_matrix(&mut self, matrix: &Matrix<T>) -> Result<(), Box<dyn Error>> {
         if self.shape.0 == 0 {
             self.shape.0 = matrix.shape.0;
             self.shape.1 = matrix.shape.1;
@@ -1014,6 +1014,77 @@ impl<T: Default + Copy> Matrix<T> {
         self.shape.0 += 1;
         for i in (0..self.shape.1).rev() {
             self.data.insert(index * self.shape.1, values[i]);
+        }
+        Ok(())
+    }
+
+    /// Add rows to the matrix
+    /// The rows will be added to the index specified
+    /// The rows will be initialized with the values in the matrix
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let data = vec![10, 10, 10, 20, 20, 20];
+    /// let shape = (2, 3);
+    /// let matrix2 = Matrix::new(data, shape).unwrap();
+    ///
+    /// matrix.add_rows_from_matrix(&matrix2).unwrap();
+    ///
+    /// assert_eq!(matrix.shape(), (4, 3));
+    /// assert_eq!(matrix.as_slice(), [1, 2, 3, 4, 5, 6, 10, 10, 10, 20, 20, 20]);
+    /// ```
+    ///
+    /// If the matrix is empty, a new matrix will be created with the rows
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data: Vec<u32> = Vec::new();
+    /// let shape = (0, 0);
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let data = vec![10, 10, 10, 20, 20, 20];
+    /// let shape = (2, 3);
+    /// let matrix2 = Matrix::new(data, shape).unwrap();
+    ///
+    /// matrix.add_rows_from_matrix(&matrix2).unwrap();
+    ///
+    /// assert_eq!(matrix.shape(), (2, 3));
+    /// assert_eq!(matrix.as_slice(), [10, 10, 10, 20, 20, 20]);
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// If the matrices do not have the same number of columns, an error will be returned
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let data = vec![10, 10, 20, 20];
+    /// let shape = (2, 2);
+    /// let matrix2 = Matrix::new(data, shape).unwrap();
+    ///
+    /// let result = matrix.add_rows_from_matrix(&matrix2);
+    ///
+    /// assert!(result.is_err());
+    /// ```
+    pub fn add_rows_from_matrix(&mut self, matrix: &Matrix<T>) -> Result<(), Box<dyn Error>> {
+        if self.shape.1 != matrix.shape().1 && self.shape != (0, 0)  {
+            return Err("Matrices must have the same number of columns".into());
+        }
+        for i in 0..matrix.shape().0 {
+            self.add_row_from_vec(self.shape.0, matrix.get_row(i).unwrap().to_vec())?;
         }
         Ok(())
     }
