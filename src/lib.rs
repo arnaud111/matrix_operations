@@ -30,7 +30,7 @@ pub mod operations;
 
 use std::error::Error;
 use std::fmt::{Display, Formatter};
-use std::ops::{Index, IndexMut};
+use std::ops::{Index, IndexMut, Range};
 
 /// A matrix struct that can be used to perform matrix operations.
 pub struct Matrix<T> {
@@ -75,6 +75,56 @@ impl<T> Index<usize> for Matrix<T> {
     fn index(&self, index: usize) -> &Self::Output {
         let start = index * self.shape.1;
         let end = start + self.shape.1;
+        &self.data[start..end]
+    }
+}
+
+impl<T: Copy + Default> Index<Range<usize>> for Matrix<T> {
+    type Output = [T];
+
+    /// Allows the matrix get a range of rows
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (3, 2);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// assert_eq!(matrix[0..1], [1, 2]);
+    /// assert_eq!(matrix[1..3], [3, 4, 5, 6]);
+    /// ```
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (3, 2);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let matrix2 = Matrix::from_slice(&matrix[0..2], (2, 2)).unwrap();
+    ///
+    /// assert_eq!(matrix2.as_slice(), [1, 2, 3, 4]);
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if the range is out of bounds
+    ///
+    /// ```should_panic
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (3, 2);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// assert_eq!(matrix[0..4], [1, 2, 3, 4, 5, 6]);
+    /// ```
+    fn index(&self, index: Range<usize>) -> &Self::Output {
+        let start = index.start * self.shape.1;
+        let end = index.end * self.shape.1;
         &self.data[start..end]
     }
 }
