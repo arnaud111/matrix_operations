@@ -7,7 +7,7 @@ use crate::Matrix;
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::additions::add;
+/// use matrix_operations::additions::add_matrices;
 /// use matrix_operations::Matrix;
 ///
 /// let shape = (2, 3);
@@ -16,7 +16,7 @@ use crate::Matrix;
 /// let matrix1 = Matrix::new(data1, shape).unwrap();
 /// let matrix2 = Matrix::new(data2, shape).unwrap();
 ///
-/// let new_matrix = add(&matrix1, &matrix2).unwrap();
+/// let new_matrix = add_matrices(&matrix1, &matrix2).unwrap();
 ///
 /// assert_eq!(new_matrix[0][0], 2);
 /// assert_eq!(new_matrix[0][1], 4);
@@ -31,7 +31,7 @@ use crate::Matrix;
 /// If the matrices are not compatible for addition, an error will be returned
 ///
 /// ```
-/// use matrix_operations::additions::add;
+/// use matrix_operations::additions::add_matrices;
 /// use matrix_operations::Matrix;
 ///
 /// let shape1 = (2, 3);
@@ -41,11 +41,11 @@ use crate::Matrix;
 /// let matrix1 = Matrix::new(data1, shape1).unwrap();
 /// let matrix2 = Matrix::new(data2, shape2).unwrap();
 ///
-/// let new_matrix = add(&matrix1, &matrix2);
+/// let new_matrix = add_matrices(&matrix1, &matrix2);
 ///
 /// assert!(new_matrix.is_err());
 /// ```
-pub fn add<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms2: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
+pub fn add_matrices<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms2: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
     if terms1.shape != terms2.shape {
         return Err("Matrix shapes are not compatible for addition".into());
     }
@@ -61,7 +61,7 @@ pub fn add<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms2: &Mat
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::additions::add_column;
+/// use matrix_operations::additions::add_matrix_with_column;
 /// use matrix_operations::Matrix;
 ///
 /// let shape1 = (2, 3);
@@ -71,7 +71,7 @@ pub fn add<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms2: &Mat
 /// let matrix1 = Matrix::new(data1, shape1).unwrap();
 /// let matrix2 = Matrix::new(data2, shape2).unwrap();
 ///
-/// let new_matrix = add_column(&matrix1, &matrix2).unwrap();
+/// let new_matrix = add_matrix_with_column(&matrix1, &matrix2).unwrap();
 ///
 /// assert_eq!(new_matrix[0][0], 2);
 /// assert_eq!(new_matrix[0][1], 4);
@@ -86,7 +86,7 @@ pub fn add<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms2: &Mat
 /// If the second matrix is not row with same number of column as the first matrix, an error will be returned
 ///
 /// ```
-/// use matrix_operations::additions::add_column;
+/// use matrix_operations::additions::add_matrix_with_column;
 /// use matrix_operations::Matrix;
 ///
 /// let shape1 = (2, 3);
@@ -96,13 +96,13 @@ pub fn add<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms2: &Mat
 /// let matrix1 = Matrix::new(data1, shape1).unwrap();
 /// let matrix2 = Matrix::new(data2, shape2).unwrap();
 ///
-/// let new_matrix = add_column(&matrix1, &matrix2);
+/// let new_matrix = add_matrix_with_column(&matrix1, &matrix2);
 ///
 /// assert!(new_matrix.is_err());
 /// ```
 ///
 /// ```
-/// use matrix_operations::additions::add_column;
+/// use matrix_operations::additions::add_matrix_with_column;
 /// use matrix_operations::Matrix;
 ///
 /// let shape1 = (2, 3);
@@ -112,11 +112,11 @@ pub fn add<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms2: &Mat
 /// let matrix1 = Matrix::new(data1, shape1).unwrap();
 /// let matrix2 = Matrix::new(data2, shape2).unwrap();
 ///
-/// let new_matrix = add_column(&matrix1, &matrix2);
+/// let new_matrix = add_matrix_with_column(&matrix1, &matrix2);
 ///
 /// assert!(new_matrix.is_err());
 /// ```
-pub fn add_column<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms2: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
+pub fn add_matrix_with_column<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms2: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
     if terms2.shape.0 != 1 {
         return Err("Second matrix need to have 1 row".into());
     }
@@ -135,7 +135,7 @@ pub fn add_column<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::additions::add_row;
+/// use matrix_operations::additions::add_matrix_with_row;
 /// use matrix_operations::Matrix;
 ///
 /// let shape1 = (2, 3);
@@ -145,7 +145,7 @@ pub fn add_column<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms
 /// let matrix1 = Matrix::new(data1, shape1).unwrap();
 /// let matrix2 = Matrix::new(data2, shape2).unwrap();
 ///
-/// let new_matrix = add_row(&matrix1, &matrix2).unwrap();
+/// let new_matrix = add_matrix_with_row(&matrix1, &matrix2).unwrap();
 ///
 /// assert_eq!(new_matrix[0][0], 2);
 /// assert_eq!(new_matrix[0][1], 3);
@@ -160,7 +160,7 @@ pub fn add_column<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms
 /// If the second matrix is not column with same number of row as the first matrix, an error will be returned
 ///
 /// ```
-/// use matrix_operations::additions::add_row;
+/// use matrix_operations::additions::add_matrix_with_row;
 /// use matrix_operations::Matrix;
 ///
 /// let shape1 = (2, 3);
@@ -170,13 +170,13 @@ pub fn add_column<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms
 /// let matrix1 = Matrix::new(data1, shape1).unwrap();
 /// let matrix2 = Matrix::new(data2, shape2).unwrap();
 ///
-/// let new_matrix = add_row(&matrix1, &matrix2);
+/// let new_matrix = add_matrix_with_row(&matrix1, &matrix2);
 ///
 /// assert!(new_matrix.is_err());
 /// ```
 ///
 /// ```
-/// use matrix_operations::additions::add_row;
+/// use matrix_operations::additions::add_matrix_with_row;
 /// use matrix_operations::Matrix;
 ///
 /// let shape1 = (2, 3);
@@ -186,11 +186,11 @@ pub fn add_column<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms
 /// let matrix1 = Matrix::new(data1, shape1).unwrap();
 /// let matrix2 = Matrix::new(data2, shape2).unwrap();
 ///
-/// let new_matrix = add_row(&matrix1, &matrix2);
+/// let new_matrix = add_matrix_with_row(&matrix1, &matrix2);
 ///
 /// assert!(new_matrix.is_err());
 /// ```
-pub fn add_row<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms2: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
+pub fn add_matrix_with_row<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms2: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
     if terms2.shape.1 != 1 {
         return Err("Second matrix need to have 1 column".into());
     }

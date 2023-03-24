@@ -54,7 +54,7 @@ pub mod additions;
 
 use std::error::Error;
 use std::fmt::{Display, Formatter};
-use std::ops::{Add, AddAssign, Div, Index, IndexMut, Mul, Sub};
+use std::ops::{AddAssign, Div, Index, IndexMut, Mul, Sub};
 
 /// A matrix struct that can be used to perform matrix operations.
 pub struct Matrix<T> {
