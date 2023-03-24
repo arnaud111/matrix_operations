@@ -238,7 +238,7 @@ impl<T: Default + Copy> Matrix<T> {
     /// use matrix_operations::Matrix;
     ///
     /// let shape = (2, 3);
-    /// let matrix: Matrix<u32> = Matrix::default(shape);
+    /// let matrix: Matrix<u32> = Matrix::new_default(shape);
     ///
     /// assert_eq!(matrix[0][0], 0);
     /// assert_eq!(matrix[0][1], 0);
@@ -247,7 +247,7 @@ impl<T: Default + Copy> Matrix<T> {
     /// assert_eq!(matrix[1][1], 0);
     /// assert_eq!(matrix[1][2], 0);
     /// ```
-    pub fn default(shape: (usize, usize)) -> Matrix<T> {
+    pub fn new_default(shape: (usize, usize)) -> Matrix<T> {
         Matrix {
             data: vec![T::default(); shape.0 * shape.1],
             shape,
@@ -262,7 +262,7 @@ impl<T: Default + Copy> Matrix<T> {
     /// use matrix_operations::Matrix;
     ///
     /// let shape = (2, 3);
-    /// let matrix = Matrix::initialised(shape, 10);
+    /// let matrix = Matrix::new_initialised(shape, 10);
     ///
     /// assert_eq!(matrix[0][0], 10);
     /// assert_eq!(matrix[0][1], 10);
@@ -271,7 +271,7 @@ impl<T: Default + Copy> Matrix<T> {
     /// assert_eq!(matrix[1][1], 10);
     /// assert_eq!(matrix[1][2], 10);
     /// ```
-    pub fn initialised(shape: (usize, usize), value: T) -> Matrix<T> {
+    pub fn new_initialised(shape: (usize, usize), value: T) -> Matrix<T> {
         Matrix {
             data: vec![value; shape.0 * shape.1],
             shape,
@@ -396,7 +396,7 @@ impl<T: Default + Copy> Matrix<T> {
                 return Err("Data length does not match shape".into());
             }
         }
-        let mut matrix = Matrix::default(shape);
+        let mut matrix = Matrix::new_default(shape);
         for i in 0..shape.0 {
             for j in 0..shape.1 {
                 matrix[i][j] = data[i][j];

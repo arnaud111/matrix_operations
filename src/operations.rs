@@ -27,7 +27,7 @@ use crate::Matrix;
 /// assert_eq!(new_matrix.shape(), (3, 2));
 /// ```
 pub fn transpose_matrix<T: Copy + Default>(matrix: &Matrix<T>) -> Matrix<T> {
-    let mut result = Matrix::default((matrix.shape.1, matrix.shape.0));
+    let mut result = Matrix::new_default((matrix.shape.1, matrix.shape.0));
     for i in 0..matrix.shape.0 {
         for j in 0..matrix.shape.1 {
             result[j][i] = matrix[i][j];
@@ -83,7 +83,7 @@ pub fn add_matrices<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, ter
     if terms1.shape != terms2.shape {
         return Err("Matrix shapes are not compatible for addition".into());
     }
-    let mut result = Matrix::default(terms1.shape);
+    let mut result = Matrix::new_default(terms1.shape);
     for i in 0..terms1.data.len() {
         result.data[i] = terms1.data[i] + terms2.data[i];
     }
@@ -157,7 +157,7 @@ pub fn add_matrix_with_1row_matrix<T: Copy + Add<Output = T> + Default>(terms1: 
     if terms2.shape.1 != terms1.shape.1 {
         return Err("Second matrix need to have same number of columns".into());
     }
-    let mut result = Matrix::default(terms1.shape);
+    let mut result = Matrix::new_default(terms1.shape);
     for i in 0..terms1.data.len() {
         result.data[i] = terms1.data[i] + terms2.data[i % terms2.shape.1];
     }
@@ -231,7 +231,7 @@ pub fn add_matrix_with_1col_matrix<T: Copy + Add<Output = T> + Default>(terms1: 
     if terms2.shape.0 != terms1.shape.0 {
         return Err("Second matrix need to have same number of rows".into());
     }
-    let mut result = Matrix::default(terms1.shape);
+    let mut result = Matrix::new_default(terms1.shape);
     for i in 0..terms1.data.len() {
         result.data[i] = terms1.data[i] + terms2.data[i / terms1.shape.1];
     }
@@ -260,7 +260,7 @@ pub fn add_matrix_with_1col_matrix<T: Copy + Add<Output = T> + Default>(terms1: 
 /// assert_eq!(new_matrix[1][2], 8);
 /// ```
 pub fn add_matrix_with_scalar<T: Copy + Add<Output = T> + Default>(terms: &Matrix<T>, scalar: T) -> Matrix<T> {
-    let mut result = Matrix::default(terms.shape);
+    let mut result = Matrix::new_default(terms.shape);
     for i in 0..terms.data.len() {
         result.data[i] = terms.data[i] + scalar;
     }
@@ -289,7 +289,7 @@ pub fn add_matrix_with_scalar<T: Copy + Add<Output = T> + Default>(terms: &Matri
 /// assert_eq!(new_matrix[1][2], 12);
 /// ```
 pub fn apply_to_matrix<T: Copy + Default>(matrix: &Matrix<T>, f: fn(T) -> T) -> Matrix<T> {
-    let mut result = Matrix::default(matrix.shape);
+    let mut result = Matrix::new_default(matrix.shape);
     for i in 0..matrix.data.len() {
         result.data[i] = f(matrix.data[i]);
     }
@@ -347,7 +347,7 @@ pub fn apply_to_matrix<T: Copy + Default>(matrix: &Matrix<T>, f: fn(T) -> T) -> 
 /// assert!(new_matrix.is_err());
 /// ```
 pub fn apply_to_matrix_columns<T: Copy + Default>(matrix: &Matrix<T>, f: fn(Vec<T>) -> Vec<T>) -> Result<Matrix<T>, Box<dyn Error>> {
-    let mut result = Matrix::default(matrix.shape);
+    let mut result = Matrix::new_default(matrix.shape);
     for i in 0..matrix.shape.1 {
         let column = matrix.get_column(i).unwrap();
         let new_column = f(column);
@@ -412,7 +412,7 @@ pub fn apply_to_matrix_columns<T: Copy + Default>(matrix: &Matrix<T>, f: fn(Vec<
 /// assert!(new_matrix.is_err());
 /// ```
 pub fn apply_to_matrix_rows<T: Copy + Default>(matrix: &Matrix<T>, f: fn(Vec<T>) -> Vec<T>) -> Result<Matrix<T>, Box<dyn Error>> {
-    let mut result = Matrix::default(matrix.shape);
+    let mut result = Matrix::new_default(matrix.shape);
     for i in 0..matrix.shape.0 {
         let new_row = f(matrix[i].to_vec());
         if new_row.len() != matrix.shape.1 {
@@ -476,7 +476,7 @@ pub fn apply_between_matrices<T: Copy + Default>(matrix1: &Matrix<T>, matrix2: &
     if matrix1.shape != matrix2.shape {
         return Err("Matrix shapes are not compatible to apply function".into());
     }
-    let mut result = Matrix::default(matrix1.shape);
+    let mut result = Matrix::new_default(matrix1.shape);
     for i in 0..matrix1.data.len() {
         result.data[i] = f(matrix1.data[i], matrix2.data[i]);
     }
@@ -505,7 +505,7 @@ pub fn apply_between_matrices<T: Copy + Default>(matrix1: &Matrix<T>, matrix2: &
 /// assert_eq!(new_matrix[1][2], 3);
 /// ```
 pub fn div_matrix_with_scalar<T: Default + Copy + Div<Output = T>>(matrix: &Matrix<T>, scalar: T) -> Matrix<T> {
-    let mut result = Matrix::default(matrix.shape);
+    let mut result = Matrix::new_default(matrix.shape);
     for i in 0..matrix.data.len() {
         result.data[i] = matrix.data[i] / scalar;
     }
@@ -559,7 +559,7 @@ pub fn sub_matrices<T: Default + Copy + Sub<Output = T>>(matrix1: &Matrix<T>, ma
     if matrix1.shape != matrix2.shape {
         return Err("Matrix shapes are not compatible for subtraction".into());
     }
-    let mut result = Matrix::default(matrix1.shape);
+    let mut result = Matrix::new_default(matrix1.shape);
     for i in 0..matrix1.data.len() {
         result.data[i] = matrix1.data[i] - matrix2.data[i];
     }
@@ -633,7 +633,7 @@ pub fn sub_matrix_with_1row_matrix<T: Default + Copy + Sub<Output = T>>(matrix1:
     if matrix2.shape.1 != matrix1.shape.1 {
         return Err("Second matrix need to have same number of columns".into());
     }
-    let mut result = Matrix::default(matrix1.shape);
+    let mut result = Matrix::new_default(matrix1.shape);
     for i in 0..matrix1.data.len() {
         result.data[i] = matrix1.data[i] - matrix2.data[i % matrix2.shape.1];
     }
@@ -707,7 +707,7 @@ pub fn sub_matrix_with_1col_matrix<T: Default + Copy + Sub<Output = T>>(matrix1:
     if matrix2.shape.0 != matrix1.shape.0 {
         return Err("Second matrix need to have same number of rows".into());
     }
-    let mut result = Matrix::default(matrix1.shape);
+    let mut result = Matrix::new_default(matrix1.shape);
     for i in 0..matrix1.data.len() {
         result.data[i] = matrix1.data[i] - matrix2.data[i / matrix1.shape.1];
     }
@@ -736,7 +736,7 @@ pub fn sub_matrix_with_1col_matrix<T: Default + Copy + Sub<Output = T>>(matrix1:
 /// assert_eq!(new_matrix[1][2], 4);
 /// ```
 pub fn sub_matrix_with_scalar<T: Default + Copy + Sub<Output = T>>(matrix: &Matrix<T>, scalar: T) -> Matrix<T> {
-    let mut result = Matrix::default(matrix.shape);
+    let mut result = Matrix::new_default(matrix.shape);
     for i in 0..matrix.data.len() {
         result.data[i] = matrix.data[i] - scalar;
     }
@@ -765,7 +765,7 @@ pub fn sub_matrix_with_scalar<T: Default + Copy + Sub<Output = T>>(matrix: &Matr
 /// assert_eq!(new_matrix[1][2], 12);
 /// ```
 pub fn mul_matrix_with_scalar<T: Default + Copy + Mul<Output = T>>(matrix: &Matrix<T>, scalar: T) -> Matrix<T> {
-    let mut result = Matrix::default(matrix.shape);
+    let mut result = Matrix::new_default(matrix.shape);
     for i in 0..matrix.data.len() {
         result.data[i] = matrix.data[i] * scalar;
     }
@@ -820,7 +820,7 @@ pub fn dot_matrices<T: Default + Copy + Mul<Output = T> + AddAssign<<T as Mul>::
     if matrix1.shape.1 != matrix2.shape.0 {
         return Err("Matrix shapes are not compatible for dot product".into());
     }
-    let mut result = Matrix::default((matrix1.shape.0, matrix2.shape.1));
+    let mut result = Matrix::new_default((matrix1.shape.0, matrix2.shape.1));
     let mut row_matrix1;
     let mut col_matrix2;
     for i in 0..result.data.len() {
