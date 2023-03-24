@@ -1,8 +1,7 @@
 //! This module contains functions for matrix operations
 
 use std::error::Error;
-use std::iter::Map;
-use std::ops::{Add, Div};
+use std::ops::{Add, Div, Sub};
 use crate::Matrix;
 
 /// Transpose the matrix
@@ -509,6 +508,237 @@ pub fn div_matrix_with_scalar<T: Default + Copy + Div<Output = T>>(matrix: &Matr
     let mut result = Matrix::default(matrix.shape);
     for i in 0..matrix.data.len() {
         result.data[i] = matrix.data[i] / scalar;
+    }
+    result
+}
+
+/// Subtract two matrices together
+///
+/// # Examples
+///
+/// ```
+/// use matrix_operations::Matrix;
+/// use matrix_operations::operations::sub_matrices;
+///
+/// let shape = (2, 3);
+/// let data1 = vec![1, 2, 3, 4, 5, 6];
+/// let data2 = vec![1, 2, 3, 4, 5, 6];
+/// let matrix1 = Matrix::new(data1, shape).unwrap();
+/// let matrix2 = Matrix::new(data2, shape).unwrap();
+///
+/// let new_matrix = sub_matrices(&matrix1, &matrix2).unwrap();
+///
+/// assert_eq!(new_matrix[0][0], 0);
+/// assert_eq!(new_matrix[0][1], 0);
+/// assert_eq!(new_matrix[0][2], 0);
+/// assert_eq!(new_matrix[1][0], 0);
+/// assert_eq!(new_matrix[1][1], 0);
+/// assert_eq!(new_matrix[1][2], 0);
+/// ```
+///
+/// # Errors
+///
+/// If the matrices are not compatible for subtraction, an error will be returned
+///
+/// ```
+/// use matrix_operations::Matrix;
+/// use matrix_operations::operations::sub_matrices;
+///
+/// let shape1 = (2, 3);
+/// let shape2 = (3, 2);
+/// let data1 = vec![1, 2, 3, 4, 5, 6];
+/// let data2 = vec![1, 2, 3, 4, 5, 6];
+/// let matrix1 = Matrix::new(data1, shape1).unwrap();
+/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+///
+/// let new_matrix = sub_matrices(&matrix1, &matrix2);
+///
+/// assert!(new_matrix.is_err());
+/// ```
+pub fn sub_matrices<T: Default + Copy + Sub<Output = T>>(matrix1: &Matrix<T>, matrix2: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
+    if matrix1.shape != matrix2.shape {
+        return Err("Matrix shapes are not compatible for subtraction".into());
+    }
+    let mut result = Matrix::default(matrix1.shape);
+    for i in 0..matrix1.data.len() {
+        result.data[i] = matrix1.data[i] - matrix2.data[i];
+    }
+    Ok(result)
+}
+
+/// Perform element-wise subtraction between a matrix and a 1 row matrix
+///
+/// # Examples
+///
+/// ```
+/// use matrix_operations::Matrix;
+/// use matrix_operations::operations::sub_matrix_with_1row_matrix;
+///
+/// let shape1 = (2, 3);
+/// let data1 = vec![1, 2, 3, 4, 5, 6];
+/// let shape2 = (1, 3);
+/// let data2 = vec![1, 2, 3];
+/// let matrix1 = Matrix::new(data1, shape1).unwrap();
+/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+///
+/// let new_matrix = sub_matrix_with_1row_matrix(&matrix1, &matrix2).unwrap();
+///
+/// assert_eq!(new_matrix[0][0], 0);
+/// assert_eq!(new_matrix[0][1], 0);
+/// assert_eq!(new_matrix[0][2], 0);
+/// assert_eq!(new_matrix[1][0], 3);
+/// assert_eq!(new_matrix[1][1], 3);
+/// assert_eq!(new_matrix[1][2], 3);
+/// ```
+///
+/// # Errors
+///
+/// If the second matrix is not row with same number of column as the first matrix, an error will be returned
+///
+/// ```
+/// use matrix_operations::Matrix;
+/// use matrix_operations::operations::sub_matrix_with_1row_matrix;
+///
+/// let shape1 = (2, 3);
+/// let data1 = vec![1, 2, 3, 4, 5, 6];
+/// let shape2 = (1, 2);
+/// let data2 = vec![1, 2];
+/// let matrix1 = Matrix::new(data1, shape1).unwrap();
+/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+///
+/// let new_matrix = sub_matrix_with_1row_matrix(&matrix1, &matrix2);
+///
+/// assert!(new_matrix.is_err());
+/// ```
+///
+/// ```
+/// use matrix_operations::Matrix;
+/// use matrix_operations::operations::sub_matrix_with_1row_matrix;
+///
+/// let shape1 = (2, 3);
+/// let data1 = vec![1, 2, 3, 4, 5, 6];
+/// let shape2 = (2, 3);
+/// let data2 = vec![1, 2, 3, 4, 5, 6];
+/// let matrix1 = Matrix::new(data1, shape1).unwrap();
+/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+///
+/// let new_matrix = sub_matrix_with_1row_matrix(&matrix1, &matrix2);
+///
+/// assert!(new_matrix.is_err());
+/// ```
+pub fn sub_matrix_with_1row_matrix<T: Default + Copy + Sub<Output = T>>(matrix1: &Matrix<T>, matrix2: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
+    if matrix2.shape.0 != 1 {
+        return Err("Second matrix need to have 1 row".into());
+    }
+    if matrix2.shape.1 != matrix1.shape.1 {
+        return Err("Second matrix need to have same number of columns".into());
+    }
+    let mut result = Matrix::default(matrix1.shape);
+    for i in 0..matrix1.data.len() {
+        result.data[i] = matrix1.data[i] - matrix2.data[i % matrix2.shape.1];
+    }
+    Ok(result)
+}
+
+/// Perform element-wise subtraction between a matrix and a 1 column matrix
+///
+/// # Examples
+///
+/// ```
+/// use matrix_operations::Matrix;
+/// use matrix_operations::operations::sub_matrix_with_1col_matrix;
+///
+/// let shape1 = (2, 3);
+/// let data1 = vec![1, 2, 3, 4, 5, 6];
+/// let shape2 = (2, 1);
+/// let data2 = vec![1, 2];
+/// let matrix1 = Matrix::new(data1, shape1).unwrap();
+/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+///
+/// let new_matrix = sub_matrix_with_1col_matrix(&matrix1, &matrix2).unwrap();
+///
+/// assert_eq!(new_matrix[0][0], 0);
+/// assert_eq!(new_matrix[0][1], 1);
+/// assert_eq!(new_matrix[0][2], 2);
+/// assert_eq!(new_matrix[1][0], 2);
+/// assert_eq!(new_matrix[1][1], 3);
+/// assert_eq!(new_matrix[1][2], 4);
+/// ```
+///
+/// # Errors
+///
+/// If the second matrix is not column with same number of row as the first matrix, an error will be returned
+///
+/// ```
+/// use matrix_operations::Matrix;
+/// use matrix_operations::operations::sub_matrix_with_1col_matrix;
+///
+/// let shape1 = (2, 3);
+/// let data1 = vec![1, 2, 3, 4, 5, 6];
+/// let shape2 = (2, 2);
+/// let data2 = vec![1, 2, 3, 4];
+/// let matrix1 = Matrix::new(data1, shape1).unwrap();
+/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+///
+/// let new_matrix = sub_matrix_with_1col_matrix(&matrix1, &matrix2);
+///
+/// assert!(new_matrix.is_err());
+/// ```
+///
+/// ```
+/// use matrix_operations::Matrix;
+/// use matrix_operations::operations::sub_matrix_with_1col_matrix;
+///
+/// let shape1 = (2, 3);
+/// let data1 = vec![1, 2, 3, 4, 5, 6];
+/// let shape2 = (3, 1);
+/// let data2 = vec![1, 2, 3];
+/// let matrix1 = Matrix::new(data1, shape1).unwrap();
+/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+///
+/// let new_matrix = sub_matrix_with_1col_matrix(&matrix1, &matrix2);
+///
+/// assert!(new_matrix.is_err());
+/// ```
+pub fn sub_matrix_with_1col_matrix<T: Default + Copy + Sub<Output = T>>(matrix1: &Matrix<T>, matrix2: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
+    if matrix2.shape.1 != 1 {
+        return Err("Second matrix need to have 1 column".into());
+    }
+    if matrix2.shape.0 != matrix1.shape.0 {
+        return Err("Second matrix need to have same number of rows".into());
+    }
+    let mut result = Matrix::default(matrix1.shape);
+    for i in 0..matrix1.data.len() {
+        result.data[i] = matrix1.data[i] - matrix2.data[i / matrix1.shape.1];
+    }
+    Ok(result)
+}
+
+/// Subtract a scalar from a matrix
+///
+/// # Examples
+///
+/// ```
+/// use matrix_operations::Matrix;
+/// use matrix_operations::operations::sub_matrix_with_scalar;
+///
+/// let shape = (2, 3);
+/// let data = vec![1, 2, 3, 4, 5, 6];
+/// let matrix = Matrix::new(data, shape).unwrap();
+///
+/// let new_matrix = sub_matrix_with_scalar(&matrix, 2);
+///
+/// assert_eq!(new_matrix[0][0], -1);
+/// assert_eq!(new_matrix[0][1], 0);
+/// assert_eq!(new_matrix[0][2], 1);
+/// assert_eq!(new_matrix[1][0], 2);
+/// assert_eq!(new_matrix[1][1], 3);
+/// assert_eq!(new_matrix[1][2], 4);
+/// ```
+pub fn sub_matrix_with_scalar<T: Default + Copy + Sub<Output = T>>(matrix: &Matrix<T>, scalar: T) -> Matrix<T> {
+    let mut result = Matrix::default(matrix.shape);
+    for i in 0..matrix.data.len() {
+        result.data[i] = matrix.data[i] - scalar;
     }
     result
 }
