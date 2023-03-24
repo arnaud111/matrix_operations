@@ -31,7 +31,7 @@ pub mod csv;
 mod macro_matrix;
 
 use std::error::Error;
-use std::fmt::{Display, Formatter};
+use std::fmt::{Debug, Display, Formatter};
 use std::ops::{Add, AddAssign, Div, Index, IndexMut, Mul, Range, Sub};
 use crate::operations::*;
 
@@ -50,11 +50,9 @@ impl<T> Index<usize> for Matrix<T> {
     ///
     /// To get specific elements of the matrix, use the `[row][col]` operator:
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3], [4, 5, 6]];
     ///
     /// assert_eq!(matrix[0][0], 1);
     /// assert_eq!(matrix[0][1], 2);
@@ -66,11 +64,9 @@ impl<T> Index<usize> for Matrix<T> {
     ///
     /// To get specific rows of the matrix, use the `[row]` operator:
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3], [4, 5, 6]];
     ///
     /// assert_eq!(matrix[0], vec![1, 2, 3]);
     /// assert_eq!(matrix[1], vec![4, 5, 6]);
@@ -90,26 +86,24 @@ impl<T: Copy + Default> Index<Range<usize>> for Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (3, 2);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2], [3, 4], [5, 6]];
     ///
     /// assert_eq!(matrix[0..1], [1, 2]);
     /// assert_eq!(matrix[1..3], [3, 4, 5, 6]);
     /// ```
     ///
+    /// You can convert to a new matrix using the `from_slice` function:
+    ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (3, 2);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2], [3, 4], [5, 6]];
     ///
-    /// let matrix2 = Matrix::from_slice(&matrix[0..2], (2, 2)).unwrap();
+    /// let matrix2 = Matrix::from_slice(&matrix[0..2], (2, matrix.shape().1)).unwrap();
     ///
-    /// assert_eq!(matrix2.as_slice(), [1, 2, 3, 4]);
+    /// assert_eq!(matrix2, matrix![[1, 2], [3, 4]]);
     /// ```
     ///
     /// # Panics
@@ -117,18 +111,68 @@ impl<T: Copy + Default> Index<Range<usize>> for Matrix<T> {
     /// Panics if the range is out of bounds
     ///
     /// ```should_panic
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (3, 2);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2], [3, 4], [5, 6]];
     ///
-    /// assert_eq!(matrix[0..4], [1, 2, 3, 4, 5, 6]);
+    /// // This will panic
+    /// let matrix2 = &matrix[0..4];
+    ///
     /// ```
     fn index(&self, index: Range<usize>) -> &Self::Output {
         let start = index.start * self.shape.1;
         let end = index.end * self.shape.1;
         &self.data[start..end]
+    }
+}
+
+impl<T: Copy> Clone for Matrix<T> where T: Clone {
+
+    /// Allows the matrix to be cloned
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::{Matrix, matrix};
+    ///
+    /// let matrix = matrix![[1, 2, 3], [4, 5, 6]];
+    /// let matrix2 = matrix.clone();
+    ///
+    /// assert_eq!(matrix, matrix2);
+    /// ```
+    fn clone(&self) -> Self {
+        Matrix {
+            data: self.data.clone(),
+            shape: self.shape,
+        }
+    }
+}
+
+impl<T> PartialEq<Self> for Matrix<T> where T: Eq {
+
+    /// Allows the matrix to be compared to another matrix
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::{Matrix, matrix};
+    ///
+    /// let matrix = matrix![[1, 2, 3], [4, 5, 6]];
+    /// let matrix2 = matrix![[1, 2, 3], [4, 5, 6]];
+    ///
+    /// assert_eq!(matrix, matrix2);
+    /// ```
+    ///
+    /// ```
+    /// use matrix_operations::{Matrix, matrix};
+    ///
+    /// let matrix = matrix![[1, 2, 3], [4, 5, 6]];
+    /// let matrix2 = matrix![[1, 2, 3], [4, 5, 7]];
+    ///
+    /// assert_ne!(matrix, matrix2);
+    /// ```
+    fn eq(&self, other: &Self) -> bool {
+        self.data == other.data && self.shape == other.shape
     }
 }
 
@@ -140,11 +184,9 @@ impl<T> IndexMut<usize> for Matrix<T> {
     ///
     /// To modify specific elements of the matrix, use the `[row][col]` operator:
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let mut data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = matrix![[1, 2, 3], [4, 5, 6]];
     ///
     /// matrix[0][0] = 10;
     ///
@@ -157,6 +199,38 @@ impl<T> IndexMut<usize> for Matrix<T> {
     }
 }
 
+impl<T: Debug> Debug for Matrix<T> {
+
+    /// Allows the matrix to be printed as debug
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::{Matrix, matrix};
+    ///
+    /// let matrix = matrix![[1, 2, 3], [4, 5, 6]];
+    ///
+    /// assert_eq!(format!("{:?}", matrix), "(2, 3) : [[1, 2, 3], [4, 5, 6]]");
+    /// ```
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let mut s = String::from(format!("({}, {}) : ", self.shape.0, self.shape.1));
+        s.push_str("[");
+        for i in 0..self.shape.0 {
+            s.push_str("[");
+            for j in 0..self.shape.1 {
+                s.push_str(&format!("{:?}, ", self[i][j]));
+            }
+            s.remove(s.len() - 1);
+            s.remove(s.len() - 1);
+            s.push_str("], ");
+        }
+        s.remove(s.len() - 1);
+        s.remove(s.len() - 1);
+        s.push_str("]");
+        write!(f, "{}", s)
+    }
+}
+
 impl<T> Display for Matrix<T> where T: Display {
 
     /// Allows the matrix to be printed
@@ -164,11 +238,9 @@ impl<T> Display for Matrix<T> where T: Display {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3], [4, 5, 6]];
     ///
     /// println!("{}", matrix);
     /// assert_eq!(format!("{}", matrix), "1 2 3 \n4 5 6 \n");
@@ -204,55 +276,48 @@ impl<T: Copy + Default + Add<Output = T>> Add for Matrix<T> {
     /// Same shape :
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
     ///
-    /// let data2 = vec![1, 2, 3, 4, 5, 6];
-    /// let shape2 = (2, 3);
-    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    /// let matrix2 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
     ///
-    /// let matrix3 = matrix + matrix2;
+    /// let matrix3 = matrix1 + matrix2;
     ///
-    /// assert_eq!(matrix3.as_slice(), [2, 4, 6, 8, 10, 12]);
+    /// assert_eq!(matrix3, matrix![[2, 4, 6], [8, 10, 12]]);
     /// ```
     ///
     /// Matrix with 1 row :
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
     ///
-    /// let data2 = vec![1, 2, 3];
-    /// let shape2 = (1, 3);
-    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    /// let matrix2 = matrix![[1, 2, 3]];
     ///
-    /// let matrix3 = matrix + matrix2;
+    /// let matrix3 = matrix1 + matrix2;
     ///
-    /// assert_eq!(matrix3.as_slice(), [2, 4, 6, 5, 7, 9]);
+    /// assert_eq!(matrix3, matrix![[2, 4, 6], [5, 7, 9]]);
     /// ```
     ///
     /// Matrix with 1 column :
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
     ///
-    /// let data2 = vec![1, 2];
-    /// let shape2 = (2, 1);
-    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    /// let matrix2 = matrix![[1],
+    ///                       [4]];
     ///
-    /// let matrix3 = matrix + matrix2;
+    /// let matrix3 = matrix1 + matrix2;
     ///
-    /// assert_eq!(matrix3.as_slice(), [2, 3, 4, 6, 7, 8]);
+    /// assert_eq!(matrix3, matrix![[2, 3, 4], [8, 9, 10]]);
     /// ```
     ///
     /// # Panics
@@ -260,17 +325,17 @@ impl<T: Copy + Default + Add<Output = T>> Add for Matrix<T> {
     /// Panics if the matrices have different shapes and no one of them has 1 row or 1 column
     ///
     /// ```should_panic
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
     ///
-    /// let data2 = vec![1, 2, 3, 4, 5, 6];
-    /// let shape2 = (3, 2);
-    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    /// let matrix2 = matrix![[1, 2],
+    ///                       [3, 4],
+    ///                       [5, 6]];
     ///
-    /// let matrix3 = matrix + matrix2;
+    /// // Panics
+    /// let matrix3 = matrix1 + matrix2;
     /// ```
     fn add(self, other: Matrix<T>) -> Matrix<T> {
         if self.shape != other.shape {
@@ -296,15 +361,14 @@ impl<T: Copy + Default + Add<Output = T>> Add<T> for Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
-    /// let matrix2 = matrix + 1;
+    /// let matrix2 = matrix1 + 1;
     ///
-    /// assert_eq!(matrix2.as_slice(), [2, 3, 4, 5, 6, 7]);
+    /// assert_eq!(matrix2, matrix![[2, 3, 4], [5, 6, 7]]);
     /// ```
     fn add(self, scalar: T) -> Matrix<T> {
         add_matrix_with_scalar(&self, scalar)
@@ -323,55 +387,48 @@ impl<T: Copy + Default + Sub<Output= T>> Sub for Matrix<T> {
     /// Same shape :
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
     ///
-    /// let data2 = vec![1, 2, 3, 4, 5, 6];
-    /// let shape2 = (2, 3);
-    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    /// let matrix2 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
     ///
-    /// let matrix3 = matrix - matrix2;
+    /// let matrix3 = matrix1 - matrix2;
     ///
-    /// assert_eq!(matrix3.as_slice(), [0, 0, 0, 0, 0, 0]);
+    /// assert_eq!(matrix3, matrix![[0, 0, 0], [0, 0, 0]]);
     /// ```
     ///
     /// Matrix with 1 row :
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
     ///
-    /// let data2 = vec![1, 2, 3];
-    /// let shape2 = (1, 3);
-    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    /// let matrix2 = matrix![[1, 2, 3]];
     ///
-    /// let matrix3 = matrix - matrix2;
+    /// let matrix3 = matrix1 - matrix2;
     ///
-    /// assert_eq!(matrix3.as_slice(), [0, 0, 0, 3, 3, 3]);
+    /// assert_eq!(matrix3, matrix![[0, 0, 0], [3, 3, 3]]);
     /// ```
     ///
     /// Matrix with 1 column :
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
     ///
-    /// let data2 = vec![1, 2];
-    /// let shape2 = (2, 1);
-    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    /// let matrix2 = matrix![[1],
+    ///                       [2]];
     ///
-    /// let matrix3 = matrix - matrix2;
+    /// let matrix3 = matrix1 - matrix2;
     ///
-    /// assert_eq!(matrix3.as_slice(), [0, 1, 2, 2, 3, 4]);
+    /// assert_eq!(matrix3, matrix![[0, 1, 2], [2, 3, 4]]);
     /// ```
     ///
     /// # Panics
@@ -379,17 +436,17 @@ impl<T: Copy + Default + Sub<Output= T>> Sub for Matrix<T> {
     /// Panics if the matrices have different shapes and no one of them has 1 row or 1 column
     ///
     /// ```should_panic
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
     ///
-    /// let data2 = vec![1, 2, 3, 4, 5, 6];
-    /// let shape2 = (3, 2);
-    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    /// let matrix2 = matrix![[1, 2],
+    ///                       [3, 4],
+    ///                       [5, 6]];
     ///
-    /// let matrix3 = matrix - matrix2;
+    /// // Panics
+    /// let matrix3 = matrix1 - matrix2;
     /// ```
     fn sub(self, other: Self) -> Self::Output {
         if self.shape != other.shape {
@@ -415,15 +472,14 @@ impl<T: Copy + Default + Sub<Output = T>> Sub<T> for Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
     ///
-    /// let matrix2 = matrix - 1;
+    /// let matrix2 = matrix1 - 1;
     ///
-    /// assert_eq!(matrix2.as_slice(), [0, 1, 2, 3, 4, 5]);
+    /// assert_eq!(matrix2, matrix![[0, 1, 2], [3, 4, 5]]);
     /// ```
     fn sub(self, scalar: T) -> Self::Output {
         sub_matrix_with_scalar(&self, scalar)
@@ -438,19 +494,18 @@ impl<T: Copy + Default + Mul<Output = T> + AddAssign> Mul for Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                    [4, 5, 6]];
     ///
-    /// let data2 = vec![1, 2, 3, 4, 5, 6];
-    /// let shape2 = (3, 2);
-    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    /// let matrix2 = matrix![[1, 2],
+    ///                       [3, 4],
+    ///                       [5, 6]];
     ///
-    /// let matrix3 = matrix * matrix2;
+    /// let matrix3 = matrix1 * matrix2;
     ///
-    /// assert_eq!(matrix3.as_slice(), [22, 28, 49, 64]);
+    /// assert_eq!(matrix3, matrix![[22, 28], [49, 64]]);
     /// ```
     ///
     /// # Panics
@@ -458,17 +513,14 @@ impl<T: Copy + Default + Mul<Output = T> + AddAssign> Mul for Matrix<T> {
     /// Panics if the matrices can't be multiplied
     ///
     /// ```should_panic
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix1 = matrix![[1, 2, 3], [4, 5, 6]];
     ///
-    /// let data2 = vec![1, 2, 3, 4, 5, 6];
-    /// let shape2 = (2, 3);
-    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    /// let matrix2 = matrix![[1, 2, 3], [4, 5, 6]];
     ///
-    /// let matrix3 = matrix * matrix2;
+    /// // Panics
+    /// let matrix3 = matrix1 * matrix2;
     /// ```
     fn mul(self, other: Matrix<T>) -> Self::Output {
         dot_matrices(&self, &other).unwrap()
@@ -483,15 +535,14 @@ impl<T: Copy + Default + Mul<Output = T>> Mul<T> for Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
     ///
-    /// let matrix2 = matrix * 2;
+    /// let matrix2 = matrix1 * 2;
     ///
-    /// assert_eq!(matrix2.as_slice(), [2, 4, 6, 8, 10, 12]);
+    /// assert_eq!(matrix2, matrix![[2, 4, 6], [8, 10, 12]]);
     /// ```
     fn mul(self, scalar: T) -> Self::Output {
         mul_matrix_with_scalar(&self, scalar)
@@ -506,15 +557,14 @@ impl<T: Copy + Default + Div<Output = T>> Div<T> for Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
     ///
-    /// let matrix2 = matrix / 2;
+    /// let matrix2 = matrix1 / 2;
     ///
-    /// assert_eq!(matrix2.as_slice(), [0, 1, 1, 2, 2, 3]);
+    /// assert_eq!(matrix2, matrix![[0, 1, 1], [2, 2, 3]]);
     /// ```
     fn div(self, scalar: T) -> Self::Output {
         div_matrix_with_scalar(&self, scalar)
