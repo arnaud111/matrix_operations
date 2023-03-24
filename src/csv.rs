@@ -1,8 +1,9 @@
 //! This module will perform the CSV parsing and writing.
 
 use std::error::Error;
+use std::fmt::Display;
 use std::fs::File;
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Write};
 use std::str::FromStr;
 use crate::Matrix;
 
@@ -13,7 +14,7 @@ use crate::Matrix;
 /// ```
 /// use matrix_operations::csv::load_matrix_from_csv;
 ///
-/// let path = "resources/test.csv";
+/// let path = "resources/test_read.csv";
 /// let separator = ",";
 ///
 /// let matrix = load_matrix_from_csv::<f32>(path, separator).unwrap();
@@ -60,4 +61,41 @@ pub fn load_matrix_from_csv<T: Default + Copy + FromStr>(path: &str, separator: 
     }
 
     Ok(matrix)
+}
+
+/// Write a Matrix to a CSV file.
+///
+/// # Examples
+///
+/// ```
+/// use matrix_operations::csv::write_matrix_to_csv;
+///
+/// let matrix = matrix_operations::Matrix::new(vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0], (3, 2)).unwrap();
+/// let path = "resources/test_write.csv";
+///
+/// write_matrix_to_csv(&matrix, path).unwrap();
+/// ```
+pub fn write_matrix_to_csv<T: Display>(matrix: &Matrix<T>, path: &str) -> Result<(), Box<dyn Error>> {
+    let mut file = File::create(path)?;
+    let mut header = String::new();
+    for i in 0..matrix.shape.1 {
+        header.push_str(&format!("col_{}", i));
+        if i != matrix.shape.1 - 1 {
+            header.push_str(",");
+        }
+    }
+    header.push_str("\n");
+    file.write_all(header.as_bytes())?;
+    for i in 0..matrix.shape.0 {
+        let mut row = String::new();
+        for j in 0..matrix.shape.1 {
+            row.push_str(&format!("{}", matrix[i][j]));
+            if j != matrix.shape.1 - 1 {
+                row.push_str(",");
+            }
+        }
+        row.push_str("\n");
+        file.write_all(row.as_bytes())?;
+    }
+    Ok(())
 }
