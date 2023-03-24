@@ -1,7 +1,8 @@
 //! This module contains functions for matrix operations
 
 use std::error::Error;
-use std::ops::Add;
+use std::iter::Map;
+use std::ops::{Add, Div};
 use crate::Matrix;
 
 /// Transpose the matrix
@@ -90,12 +91,12 @@ pub fn add_matrices<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, ter
     Ok(result)
 }
 
-/// Add a column from a matrix
+/// Perform element-wise addition of a matrix and a 1 row matrix
 ///
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::operations::add_matrix_with_column;
+/// use matrix_operations::operations::add_matrix_with_1row_matrix;
 /// use matrix_operations::Matrix;
 ///
 /// let shape1 = (2, 3);
@@ -105,7 +106,7 @@ pub fn add_matrices<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, ter
 /// let matrix1 = Matrix::new(data1, shape1).unwrap();
 /// let matrix2 = Matrix::new(data2, shape2).unwrap();
 ///
-/// let new_matrix = add_matrix_with_column(&matrix1, &matrix2).unwrap();
+/// let new_matrix = add_matrix_with_1row_matrix(&matrix1, &matrix2).unwrap();
 ///
 /// assert_eq!(new_matrix[0][0], 2);
 /// assert_eq!(new_matrix[0][1], 4);
@@ -117,10 +118,10 @@ pub fn add_matrices<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, ter
 ///
 /// # Errors
 ///
-/// If the second matrix is not row with same number of column as the first matrix, an error will be returned
+/// If the second matrix is not a row with same number of column as the first matrix, an error will be returned
 ///
 /// ```
-/// use matrix_operations::operations::add_matrix_with_column;
+/// use matrix_operations::operations::add_matrix_with_1row_matrix;
 /// use matrix_operations::Matrix;
 ///
 /// let shape1 = (2, 3);
@@ -130,13 +131,13 @@ pub fn add_matrices<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, ter
 /// let matrix1 = Matrix::new(data1, shape1).unwrap();
 /// let matrix2 = Matrix::new(data2, shape2).unwrap();
 ///
-/// let new_matrix = add_matrix_with_column(&matrix1, &matrix2);
+/// let new_matrix = add_matrix_with_1row_matrix(&matrix1, &matrix2);
 ///
 /// assert!(new_matrix.is_err());
 /// ```
 ///
 /// ```
-/// use matrix_operations::operations::add_matrix_with_column;
+/// use matrix_operations::operations::add_matrix_with_1row_matrix;
 /// use matrix_operations::Matrix;
 ///
 /// let shape1 = (2, 3);
@@ -146,11 +147,11 @@ pub fn add_matrices<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, ter
 /// let matrix1 = Matrix::new(data1, shape1).unwrap();
 /// let matrix2 = Matrix::new(data2, shape2).unwrap();
 ///
-/// let new_matrix = add_matrix_with_column(&matrix1, &matrix2);
+/// let new_matrix = add_matrix_with_1row_matrix(&matrix1, &matrix2);
 ///
 /// assert!(new_matrix.is_err());
 /// ```
-pub fn add_matrix_with_column<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms2: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
+pub fn add_matrix_with_1row_matrix<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms2: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
     if terms2.shape.0 != 1 {
         return Err("Second matrix need to have 1 row".into());
     }
@@ -164,12 +165,12 @@ pub fn add_matrix_with_column<T: Copy + Add<Output = T> + Default>(terms1: &Matr
     Ok(result)
 }
 
-/// Add a row from a matrix
+/// Perform element-wise addition of a matrix and a 1 column matrix
 ///
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::operations::add_matrix_with_row;
+/// use matrix_operations::operations::add_matrix_with_1col_matrix;
 /// use matrix_operations::Matrix;
 ///
 /// let shape1 = (2, 3);
@@ -179,7 +180,7 @@ pub fn add_matrix_with_column<T: Copy + Add<Output = T> + Default>(terms1: &Matr
 /// let matrix1 = Matrix::new(data1, shape1).unwrap();
 /// let matrix2 = Matrix::new(data2, shape2).unwrap();
 ///
-/// let new_matrix = add_matrix_with_row(&matrix1, &matrix2).unwrap();
+/// let new_matrix = add_matrix_with_1col_matrix(&matrix1, &matrix2).unwrap();
 ///
 /// assert_eq!(new_matrix[0][0], 2);
 /// assert_eq!(new_matrix[0][1], 3);
@@ -191,10 +192,10 @@ pub fn add_matrix_with_column<T: Copy + Add<Output = T> + Default>(terms1: &Matr
 ///
 /// # Errors
 ///
-/// If the second matrix is not column with same number of row as the first matrix, an error will be returned
+/// If the second matrix is not a column with same number of row as the first matrix, an error will be returned
 ///
 /// ```
-/// use matrix_operations::operations::add_matrix_with_row;
+/// use matrix_operations::operations::add_matrix_with_1col_matrix;
 /// use matrix_operations::Matrix;
 ///
 /// let shape1 = (2, 3);
@@ -204,13 +205,13 @@ pub fn add_matrix_with_column<T: Copy + Add<Output = T> + Default>(terms1: &Matr
 /// let matrix1 = Matrix::new(data1, shape1).unwrap();
 /// let matrix2 = Matrix::new(data2, shape2).unwrap();
 ///
-/// let new_matrix = add_matrix_with_row(&matrix1, &matrix2);
+/// let new_matrix = add_matrix_with_1col_matrix(&matrix1, &matrix2);
 ///
 /// assert!(new_matrix.is_err());
 /// ```
 ///
 /// ```
-/// use matrix_operations::operations::add_matrix_with_row;
+/// use matrix_operations::operations::add_matrix_with_1col_matrix;
 /// use matrix_operations::Matrix;
 ///
 /// let shape1 = (2, 3);
@@ -220,11 +221,11 @@ pub fn add_matrix_with_column<T: Copy + Add<Output = T> + Default>(terms1: &Matr
 /// let matrix1 = Matrix::new(data1, shape1).unwrap();
 /// let matrix2 = Matrix::new(data2, shape2).unwrap();
 ///
-/// let new_matrix = add_matrix_with_row(&matrix1, &matrix2);
+/// let new_matrix = add_matrix_with_1col_matrix(&matrix1, &matrix2);
 ///
 /// assert!(new_matrix.is_err());
 /// ```
-pub fn add_matrix_with_row<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms2: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
+pub fn add_matrix_with_1col_matrix<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, terms2: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
     if terms2.shape.1 != 1 {
         return Err("Second matrix need to have 1 column".into());
     }
@@ -481,4 +482,33 @@ pub fn apply_between_matrices<T: Copy + Default>(matrix1: &Matrix<T>, matrix2: &
         result.data[i] = f(matrix1.data[i], matrix2.data[i]);
     }
     Ok(result)
+}
+
+/// Divide a scalar from a matrix
+///
+/// # Examples
+///
+/// ```
+/// use matrix_operations::Matrix;
+/// use matrix_operations::operations::div_matrix_with_scalar;
+///
+/// let shape = (2, 3);
+/// let data = vec![1, 2, 3, 4, 5, 6];
+/// let matrix = Matrix::new(data, shape).unwrap();
+///
+/// let new_matrix = div_matrix_with_scalar(&matrix, 2);
+///
+/// assert_eq!(new_matrix[0][0], 0);
+/// assert_eq!(new_matrix[0][1], 1);
+/// assert_eq!(new_matrix[0][2], 1);
+/// assert_eq!(new_matrix[1][0], 2);
+/// assert_eq!(new_matrix[1][1], 2);
+/// assert_eq!(new_matrix[1][2], 3);
+/// ```
+pub fn div_matrix_with_scalar<T: Default + Copy + Div<Output = T>>(matrix: &Matrix<T>, scalar: T) -> Matrix<T> {
+    let mut result = Matrix::default(matrix.shape);
+    for i in 0..matrix.data.len() {
+        result.data[i] = matrix.data[i] / scalar;
+    }
+    result
 }
