@@ -423,6 +423,23 @@ impl<T: Default + Copy> Matrix<T> {
         &self.data
     }
 
+    /// Returns the matrix as a 1 dimensional vector
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// assert_eq!(matrix.as_vec(), vec![1, 2, 3, 4, 5, 6]);
+    /// ```
+    pub fn as_vec(&self) -> Vec<T> {
+        self.data.clone()
+    }
+
     /// Returns the shape of the matrix
     ///
     /// # Examples
