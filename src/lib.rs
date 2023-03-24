@@ -535,6 +535,11 @@ impl<T: Default + Copy> Matrix<T> {
     ///
     /// assert_eq!(matrix.shape(), (2, 4));
     /// assert_eq!(matrix.as_slice(), [0, 1, 2, 3, 0, 4, 5, 6]);
+    ///
+    /// matrix.add_column(matrix.shape().1).unwrap();
+    ///
+    /// assert_eq!(matrix.shape(), (2, 5));
+    /// assert_eq!(matrix.as_slice(), [0, 1, 2, 3, 0, 0, 4, 5, 6, 0]);
     /// ```
     ///
     /// If the matrix is empty, a new matrix will be created with the column
@@ -550,6 +555,22 @@ impl<T: Default + Copy> Matrix<T> {
     /// assert_eq!(matrix.shape(), (1, 1));
     /// assert_eq!(matrix.as_slice(), [0]);
     /// ```
+    ///
+    /// # Errors
+    ///
+    /// If the column index is out of bounds, an error will be returned
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let result = matrix.add_column(4);
+    ///
+    /// assert!(result.is_err());
+    /// ```
     pub fn add_column(&mut self, index: usize) -> Result<(), Box<dyn Error>> {
         if index > self.shape.1 {
             return Err("Column index out of bounds".into());
@@ -560,10 +581,10 @@ impl<T: Default + Copy> Matrix<T> {
             self.data.push(T::default());
             return Ok(());
         }
-        for i in 0..self.shape.0 {
-            self.data.insert(i * (self.shape.1 + 1) + index, T::default());
-        }
         self.shape.1 += 1;
+        for i in 0..self.shape.0 {
+            self.data.insert(i * self.shape.1 + index, T::default());
+        }
         Ok(())
     }
 
@@ -578,26 +599,17 @@ impl<T: Default + Copy> Matrix<T> {
     ///
     /// let data = vec![1, 2, 3, 4, 5, 6];
     /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
     ///
-    /// let new_matrix = matrix.append_column_initialized(1, 10).unwrap();
+    /// matrix.add_column_initialized(0, 10).unwrap();
     ///
-    /// assert_eq!(new_matrix.shape(), (2, 4));
-    /// assert_eq!(new_matrix.as_slice(), [1, 10, 2, 3, 4, 10, 5, 6]);
-    /// ```
+    /// assert_eq!(matrix.shape(), (2, 4));
+    /// assert_eq!(matrix.as_slice(), [10, 1, 2, 3, 10, 4, 5, 6]);
     ///
-    /// If the index is greater than the number of columns, the column will be added to the end
-    /// ```
-    /// use matrix_operations::Matrix;
+    /// matrix.add_column_initialized(matrix.shape().1, 20).unwrap();
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
-    ///
-    /// let new_matrix = matrix.append_column_initialized(3, 10).unwrap();
-    ///
-    /// assert_eq!(new_matrix.shape(), (2, 4));
-    /// assert_eq!(new_matrix.as_slice(), [1, 2, 3, 10, 4, 5, 6, 10]);
+    /// assert_eq!(matrix.shape(), (2, 5));
+    /// assert_eq!(matrix.as_slice(), [10, 1, 2, 3, 20, 10, 4, 5, 6, 20]);
     /// ```
     ///
     /// If the matrix is empty, a new matrix will be created with the column
@@ -606,28 +618,44 @@ impl<T: Default + Copy> Matrix<T> {
     ///
     /// let data: Vec<u32> = Vec::new();
     /// let shape = (0, 0);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
     ///
-    /// let new_matrix = matrix.append_column_initialized(0, 10).unwrap();
+    /// matrix.add_column_initialized(0, 10).unwrap();
     ///
-    /// assert_eq!(new_matrix.shape(), (1, 1));
-    /// assert_eq!(new_matrix.as_slice(), [10]);
+    /// assert_eq!(matrix.shape(), (1, 1));
+    /// assert_eq!(matrix.as_slice(), [10]);
     /// ```
-    pub fn append_column_initialized(&self, index: usize, value: T) -> Result<Matrix<T>, Box<dyn Error>> {
-        if self.data.len() == 0 {
-            return Matrix::new(vec![value], (1, 1));
+    ///
+    /// # Errors
+    ///
+    /// If the column index is out of bounds, an error will be returned
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let result = matrix.add_column_initialized(4, 10);
+    ///
+    /// assert!(result.is_err());
+    /// ```
+    pub fn add_column_initialized(&mut self, index: usize, value: T) -> Result<(), Box<dyn Error>> {
+        if index > self.shape.1 {
+            return Err("Column index out of bounds".into());
         }
-        let mut new_data = Vec::new();
-        for i in 0..self.data.len() {
-            if i % self.shape.1 == index {
-                new_data.push(value);
-            }
-            new_data.push(self.data[i]);
-            if index > self.shape.1 - 1 && i % self.shape.1 == self.shape.1 - 1 {
-                new_data.push(value);
-            }
+        if self.shape.0 == 0 {
+            self.shape.0 = 1;
+            self.shape.1 = 1;
+            self.data.push(value);
+            return Ok(());
         }
-        Matrix::new(new_data, (self.shape.0, self.shape.1 + 1))
+        self.shape.1 += 1;
+        for i in 0..self.shape.0 {
+            self.data.insert((i * self.shape.1) + index, value);
+        }
+        Ok(())
     }
 
     /// Add a row to the matrix
