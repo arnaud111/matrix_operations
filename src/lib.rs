@@ -99,9 +99,9 @@ impl<T: Copy + Default> Index<Range<usize>> for Matrix<T> {
     /// ```
     /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let matrix = matrix![[1, 2], [3, 4], [5, 6]];
+    /// let matrix1 = matrix![[1, 2], [3, 4], [5, 6]];
     ///
-    /// let matrix2 = Matrix::from_slice(&matrix[0..2], (2, matrix.shape().1)).unwrap();
+    /// let matrix2 = Matrix::from_slice(&matrix1[0..2], (2, matrix1.shape().1)).unwrap();
     ///
     /// assert_eq!(matrix2, matrix![[1, 2], [3, 4]]);
     /// ```
@@ -113,10 +113,10 @@ impl<T: Copy + Default> Index<Range<usize>> for Matrix<T> {
     /// ```should_panic
     /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let matrix = matrix![[1, 2], [3, 4], [5, 6]];
+    /// let matrix1 = matrix![[1, 2], [3, 4], [5, 6]];
     ///
     /// // This will panic
-    /// let matrix2 = &matrix[0..4];
+    /// let matrix2 = &matrix1[0..4];
     ///
     /// ```
     fn index(&self, index: Range<usize>) -> &Self::Output {
@@ -135,10 +135,11 @@ impl<T: Copy> Clone for Matrix<T> where T: Clone {
     /// ```
     /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let matrix = matrix![[1, 2, 3], [4, 5, 6]];
-    /// let matrix2 = matrix.clone();
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
+    /// let matrix2 = matrix1.clone();
     ///
-    /// assert_eq!(matrix, matrix2);
+    /// assert_eq!(matrix1, matrix2);
     /// ```
     fn clone(&self) -> Self {
         Matrix {
@@ -157,19 +158,25 @@ impl<T> PartialEq<Self> for Matrix<T> where T: Eq {
     /// ```
     /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let matrix = matrix![[1, 2, 3], [4, 5, 6]];
-    /// let matrix2 = matrix![[1, 2, 3], [4, 5, 6]];
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
-    /// assert_eq!(matrix, matrix2);
+    /// let matrix2 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
+    ///
+    /// assert_eq!(matrix1, matrix2);
     /// ```
     ///
     /// ```
     /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let matrix = matrix![[1, 2, 3], [4, 5, 6]];
-    /// let matrix2 = matrix![[1, 2, 3], [4, 5, 7]];
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
     ///
-    /// assert_ne!(matrix, matrix2);
+    /// let matrix2 = matrix![[1, 2, 3],
+    ///                       [4, 5, 7]];
+    ///
+    /// assert_ne!(matrix1, matrix2);
     /// ```
     fn eq(&self, other: &Self) -> bool {
         self.data == other.data && self.shape == other.shape
@@ -186,7 +193,8 @@ impl<T> IndexMut<usize> for Matrix<T> {
     /// ```
     /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let mut matrix = matrix![[1, 2, 3], [4, 5, 6]];
+    /// let mut matrix = matrix![[1, 2, 3],
+    ///                          [4, 5, 6]];
     ///
     /// matrix[0][0] = 10;
     ///
@@ -208,7 +216,8 @@ impl<T: Debug> Debug for Matrix<T> {
     /// ```
     /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let matrix = matrix![[1, 2, 3], [4, 5, 6]];
+    /// let matrix = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
     /// assert_eq!(format!("{:?}", matrix), "(2, 3) : [[1, 2, 3], [4, 5, 6]]");
     /// ```
@@ -240,7 +249,8 @@ impl<T> Display for Matrix<T> where T: Display {
     /// ```
     /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let matrix = matrix![[1, 2, 3], [4, 5, 6]];
+    /// let matrix = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
     /// println!("{}", matrix);
     /// assert_eq!(format!("{}", matrix), "1 2 3 \n4 5 6 \n");
@@ -364,7 +374,7 @@ impl<T: Copy + Default + Add<Output = T>> Add<T> for Matrix<T> {
     /// use matrix_operations::{Matrix, matrix};
     ///
     /// let matrix1 = matrix![[1, 2, 3],
-    ///                      [4, 5, 6]];
+    ///                       [4, 5, 6]];
     ///
     /// let matrix2 = matrix1 + 1;
     ///
@@ -792,11 +802,10 @@ impl<T: Default + Copy> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
     /// assert_eq!(matrix.as_slice(), [1, 2, 3, 4, 5, 6]);
     /// ```
@@ -809,11 +818,10 @@ impl<T: Default + Copy> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
     /// assert_eq!(matrix.as_vec(), vec![1, 2, 3, 4, 5, 6]);
     /// ```
@@ -826,11 +834,10 @@ impl<T: Default + Copy> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
     /// assert_eq!(matrix.as_2d_vec(), vec![vec![1, 2, 3], vec![4, 5, 6]]);
     /// ```
@@ -851,11 +858,10 @@ impl<T: Default + Copy> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
     /// assert_eq!(matrix.shape(), (2, 3));
     /// ```
@@ -868,11 +874,10 @@ impl<T: Default + Copy> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
     /// let column = matrix.get_column(0).unwrap();
     ///
@@ -884,11 +889,10 @@ impl<T: Default + Copy> Matrix<T> {
     /// If the column index is out of bounds, an error will be returned
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
     /// let column = matrix.get_column(3);
     ///
@@ -911,16 +915,14 @@ impl<T: Default + Copy> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
     /// let columns = matrix.get_columns(0, 2).unwrap();
     ///
-    /// assert_eq!(columns.shape(), (2, 2));
-    /// assert_eq!(columns.as_2d_vec(), vec![vec![1, 2], vec![4, 5]]);
+    /// assert_eq!(columns, matrix![[1, 2], [4, 5]]);
     /// ```
     ///
     /// # Errors
@@ -928,11 +930,10 @@ impl<T: Default + Copy> Matrix<T> {
     /// If the start or end index is out of bounds, an error will be returned
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
     /// let columns = matrix.get_columns(0, 4);
     ///
@@ -940,11 +941,10 @@ impl<T: Default + Copy> Matrix<T> {
     /// ```
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
     /// let columns = matrix.get_columns(4, 2);
     ///
@@ -968,11 +968,10 @@ impl<T: Default + Copy> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
     /// let row = matrix.get_row(0).unwrap();
     ///
@@ -984,11 +983,10 @@ impl<T: Default + Copy> Matrix<T> {
     /// If the row index is out of bounds, an error will be returned
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
     /// let row = matrix.get_row(2);
     ///
@@ -1007,16 +1005,14 @@ impl<T: Default + Copy> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
     /// let rows = matrix.get_rows(0, 1).unwrap();
     ///
-    /// assert_eq!(rows.shape(), (1, 3));
-    /// assert_eq!(rows.as_vec(), vec![1, 2, 3]);
+    /// assert_eq!(rows, matrix![[1, 2, 3]]);
     /// ```
     ///
     /// # Errors
@@ -1024,11 +1020,10 @@ impl<T: Default + Copy> Matrix<T> {
     /// If the start or end index is out of bounds, an error will be returned
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
     /// let rows = matrix.get_rows(0, 3);
     ///
@@ -1036,11 +1031,10 @@ impl<T: Default + Copy> Matrix<T> {
     /// ```
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let matrix = Matrix::new(data, shape).unwrap();
+    /// let matrix = matrix![[1, 2, 3],
+    ///                      [4, 5, 6]];
     ///
     /// let rows = matrix.get_rows(3, 4);
     ///
@@ -1063,35 +1057,27 @@ impl<T: Default + Copy> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = matrix![[1, 2, 3],
+    ///                          [4, 5, 6]];
     ///
     /// matrix.add_column(0).unwrap();
-    ///
-    /// assert_eq!(matrix.shape(), (2, 4));
-    /// assert_eq!(matrix.as_slice(), [0, 1, 2, 3, 0, 4, 5, 6]);
+    /// assert_eq!(matrix, matrix![[0, 1, 2, 3], [0, 4, 5, 6]]);
     ///
     /// matrix.add_column(matrix.shape().1).unwrap();
-    ///
-    /// assert_eq!(matrix.shape(), (2, 5));
-    /// assert_eq!(matrix.as_slice(), [0, 1, 2, 3, 0, 0, 4, 5, 6, 0]);
+    /// assert_eq!(matrix, matrix![[0, 1, 2, 3, 0], [0, 4, 5, 6, 0]]);
     /// ```
     ///
     /// If the matrix is empty, a new matrix will be created with the column
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data: Vec<u32> = Vec::new();
-    /// let shape = (0, 0);
-    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = matrix![];
     ///
     /// matrix.add_column(0).unwrap();
     ///
-    /// assert_eq!(matrix.shape(), (1, 1));
-    /// assert_eq!(matrix.as_slice(), [0]);
+    /// assert_eq!(matrix, matrix![[0]]);
     /// ```
     ///
     /// # Errors
@@ -1099,11 +1085,10 @@ impl<T: Default + Copy> Matrix<T> {
     /// If the column index is out of bounds, an error will be returned
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = matrix![[1, 2, 3],
+    ///                          [4, 5, 6]];
     ///
     /// let result = matrix.add_column(4);
     ///
@@ -1133,35 +1118,27 @@ impl<T: Default + Copy> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = matrix![[1, 2, 3],
+    ///                          [4, 5, 6]];
     ///
     /// matrix.add_column_initialized(0, 10).unwrap();
-    ///
-    /// assert_eq!(matrix.shape(), (2, 4));
-    /// assert_eq!(matrix.as_slice(), [10, 1, 2, 3, 10, 4, 5, 6]);
+    /// assert_eq!(matrix, matrix![[10, 1, 2, 3], [10, 4, 5, 6]]);
     ///
     /// matrix.add_column_initialized(matrix.shape().1, 20).unwrap();
-    ///
-    /// assert_eq!(matrix.shape(), (2, 5));
-    /// assert_eq!(matrix.as_slice(), [10, 1, 2, 3, 20, 10, 4, 5, 6, 20]);
+    /// assert_eq!(matrix, matrix![[10, 1, 2, 3, 20], [10, 4, 5, 6, 20]]);
     /// ```
     ///
     /// If the matrix is empty, a new matrix will be created with the column
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data: Vec<u32> = Vec::new();
-    /// let shape = (0, 0);
-    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = matrix![];
     ///
     /// matrix.add_column_initialized(0, 10).unwrap();
     ///
-    /// assert_eq!(matrix.shape(), (1, 1));
-    /// assert_eq!(matrix.as_slice(), [10]);
+    /// assert_eq!(matrix, matrix![[10]]);
     /// ```
     ///
     /// # Errors
@@ -1169,11 +1146,10 @@ impl<T: Default + Copy> Matrix<T> {
     /// If the column index is out of bounds, an error will be returned
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = matrix![[1, 2, 3],
+    ///                          [4, 5, 6]];
     ///
     /// let result = matrix.add_column_initialized(4, 10);
     ///
@@ -1203,35 +1179,27 @@ impl<T: Default + Copy> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = matrix![[1, 2, 3],
+    ///                          [4, 5, 6]];
     ///
     /// matrix.add_column_from_vec(0, vec![10, 20]).unwrap();
-    ///
-    /// assert_eq!(matrix.shape(), (2, 4));
-    /// assert_eq!(matrix.as_slice(), [10, 1, 2, 3, 20, 4, 5, 6]);
+    /// assert_eq!(matrix, matrix![[10, 1, 2, 3], [20, 4, 5, 6]]);
     ///
     /// matrix.add_column_from_vec(matrix.shape().1, vec![30, 40]).unwrap();
-    ///
-    /// assert_eq!(matrix.shape(), (2, 5));
-    /// assert_eq!(matrix.as_slice(), [10, 1, 2, 3, 30, 20, 4, 5, 6, 40]);
+    /// assert_eq!(matrix, matrix![[10, 1, 2, 3, 30], [20, 4, 5, 6, 40]]);
     /// ```
     ///
     /// If the matrix is empty, a new matrix will be created with the column
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data: Vec<u32> = Vec::new();
-    /// let shape = (0, 0);
-    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = matrix![];
     ///
     /// matrix.add_column_from_vec(0, vec![10, 20]).unwrap();
     ///
-    /// assert_eq!(matrix.shape(), (2, 1));
-    /// assert_eq!(matrix.as_slice(), [10, 20]);
+    /// assert_eq!(matrix, matrix![[10], [20]]);
     /// ```
     ///
     /// # Errors
@@ -1239,11 +1207,10 @@ impl<T: Default + Copy> Matrix<T> {
     /// If the column index is out of bounds, an error will be returned
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = matrix![[1, 2, 3],
+    ///                          [4, 5, 6]];
     ///
     /// let result = matrix.add_column_from_vec(4, vec![10, 20]);
     ///
@@ -1275,37 +1242,29 @@ impl<T: Default + Copy> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = matrix![[1, 2, 3],
+    ///                          [4, 5, 6]];
     ///
-    /// let data2 = vec![10, 20, 30, 40];
-    /// let shape2 = (2, 2);
-    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    /// let mut matrix2 = matrix![[10, 20],
+    ///                          [30, 40]];
     ///
     /// matrix.add_columns_from_matrix(&matrix2).unwrap();
-    /// assert_eq!(matrix.shape(), (2, 5));
-    /// assert_eq!(matrix.as_slice(), [1, 2, 3, 10, 20, 4, 5, 6, 30, 40]);
+    /// assert_eq!(matrix, matrix![[1, 2, 3, 10, 20], [4, 5, 6, 30, 40]]);
     /// ```
     ///
     /// If the first matrix is empty, a new matrix will be created with the matrix data
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data: Vec<u32> = Vec::new();
-    /// let shape = (0, 0);
-    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = matrix![];
     ///
-    /// let data2 = vec![10, 20];
-    /// let shape2 = (2, 1);
-    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    /// let matrix2 = matrix![[10], [20]];
     ///
     /// matrix.add_columns_from_matrix(&matrix2).unwrap();
     ///
-    /// assert_eq!(matrix.shape(), (2, 1));
-    /// assert_eq!(matrix.as_slice(), [10, 20]);
+    /// assert_eq!(matrix, matrix![[10], [20]]);
     /// ```
     ///
     /// # Errors
@@ -1313,15 +1272,12 @@ impl<T: Default + Copy> Matrix<T> {
     /// If the number of rows does not match, an error will be returned
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = matrix![[1, 2, 3],
+    ///                          [4, 5, 6]];
     ///
-    /// let data2 = vec![10, 20, 30];
-    /// let shape2 = (3, 1);
-    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    /// let matrix2 = matrix![[10, 20, 30]];
     ///
     /// let result = matrix.add_columns_from_matrix(&matrix2);
     ///
@@ -1352,16 +1308,14 @@ impl<T: Default + Copy> Matrix<T> {
     /// # Examples
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = matrix![[1, 2, 3],
+    ///                          [4, 5, 6]];
     ///
     /// matrix.remove_column(1).unwrap();
     ///
-    /// assert_eq!(matrix.shape(), (2, 2));
-    /// assert_eq!(matrix.as_slice(), [1, 3, 4, 6]);
+    /// assert_eq!(matrix, matrix![[1, 3], [4, 6]]);
     /// ```
     ///
     /// # Errors
@@ -1369,11 +1323,10 @@ impl<T: Default + Copy> Matrix<T> {
     /// If the column index is out of bounds, an error will be returned
     ///
     /// ```
-    /// use matrix_operations::Matrix;
+    /// use matrix_operations::{Matrix, matrix};
     ///
-    /// let data = vec![1, 2, 3, 4, 5, 6];
-    /// let shape = (2, 3);
-    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    /// let mut matrix = matrix![[1, 2, 3],
+    ///                          [4, 5, 6]];
     ///
     /// let result = matrix.remove_column(3);
     ///

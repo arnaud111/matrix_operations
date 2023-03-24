@@ -31,4 +31,7 @@ macro_rules! matrix {
     ($([$($x:expr),* $(,)*]),+ $(,)*) => {
         $crate::Matrix::from_2d_vec(vec![$(vec![$($x),*]),+]).unwrap()
     };
+    () => {
+        $crate::Matrix::new(vec![], (0, 0)).unwrap()
+    };
 }
