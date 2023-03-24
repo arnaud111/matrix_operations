@@ -31,7 +31,7 @@ pub mod csv;
 
 use std::error::Error;
 use std::fmt::{Display, Formatter};
-use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Range, Sub};
+use std::ops::{Add, AddAssign, Div, Index, IndexMut, Mul, Range, Sub};
 use crate::operations::*;
 
 /// A matrix struct that can be used to perform matrix operations.
@@ -494,6 +494,29 @@ impl<T: Copy + Default + Mul<Output = T>> Mul<T> for Matrix<T> {
     /// ```
     fn mul(self, scalar: T) -> Self::Output {
         mul_matrix_with_scalar(&self, scalar)
+    }
+}
+
+impl<T: Copy + Default + Div<Output = T>> Div<T> for Matrix<T> {
+    type Output = Matrix<T>;
+
+    /// Allows the matrix to be divided to a scalar
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let matrix2 = matrix / 2;
+    ///
+    /// assert_eq!(matrix2.as_slice(), [0, 1, 1, 2, 2, 3]);
+    /// ```
+    fn div(self, scalar: T) -> Self::Output {
+        div_matrix_with_scalar(&self, scalar)
     }
 }
 
