@@ -524,6 +524,64 @@ impl<T: Default + Copy> Matrix<T> {
         Ok(column_vec)
     }
 
+    /// Returns a matrix with the columns specified by the start and end index
+    /// The start index is inclusive and the end index is exclusive
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let columns = matrix.get_columns(0, 2).unwrap();
+    ///
+    /// assert_eq!(columns.shape(), (2, 2));
+    /// assert_eq!(columns.as_2d_vec(), vec![vec![1, 2], vec![4, 5]]);
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// If the start or end index is out of bounds, an error will be returned
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let columns = matrix.get_columns(0, 4);
+    ///
+    /// assert!(columns.is_err());
+    /// ```
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let columns = matrix.get_columns(4, 2);
+    ///
+    /// assert!(columns.is_err());
+    /// ```
+    pub fn get_columns(&self, start: usize, end: usize) -> Result<Matrix<T>, Box<dyn Error>> {
+        if start >= self.shape.1 || end >= self.shape.1 {
+            return Err("Column index out of bounds".into());
+        }
+        let mut data = Vec::new();
+        for i in 0..self.shape.0 {
+            for j in start..end {
+                data.push(self.data[i * self.shape.1 + j]);
+            }
+        }
+        Ok(Matrix::new(data, (self.shape.0, end - start))?)
+    }
+
     /// Returns the row of the matrix at the given index as a Vec
     ///
     /// # Examples
