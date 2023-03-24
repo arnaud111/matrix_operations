@@ -31,7 +31,7 @@ pub mod csv;
 
 use std::error::Error;
 use std::fmt::{Display, Formatter};
-use std::ops::{Add, Index, IndexMut, Range, Sub};
+use std::ops::{Add, AddAssign, Index, IndexMut, Mul, Range, Sub};
 use crate::operations::*;
 
 /// A matrix struct that can be used to perform matrix operations.
@@ -406,7 +406,7 @@ impl<T: Copy + Default + Sub<Output= T>> Sub for Matrix<T> {
     }
 }
 
-impl<T: Copy + Default + Sub<Output= T>> Sub<T> for Matrix<T> {
+impl<T: Copy + Default + Sub<Output = T>> Sub<T> for Matrix<T> {
     type Output = Matrix<T>;
 
     /// Allows the matrix to be subtracted to a scalar
@@ -426,6 +426,74 @@ impl<T: Copy + Default + Sub<Output= T>> Sub<T> for Matrix<T> {
     /// ```
     fn sub(self, scalar: T) -> Self::Output {
         sub_matrix_with_scalar(&self, scalar)
+    }
+}
+
+impl<T: Copy + Default + Mul<Output = T> + AddAssign> Mul for Matrix<T> {
+    type Output = Matrix<T>;
+
+    /// Allows the matrix to be multiplied to another matrix
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let data2 = vec![1, 2, 3, 4, 5, 6];
+    /// let shape2 = (3, 2);
+    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    ///
+    /// let matrix3 = matrix * matrix2;
+    ///
+    /// assert_eq!(matrix3.as_slice(), [22, 28, 49, 64]);
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if the matrices can't be multiplied
+    ///
+    /// ```should_panic
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let data2 = vec![1, 2, 3, 4, 5, 6];
+    /// let shape2 = (2, 3);
+    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    ///
+    /// let matrix3 = matrix * matrix2;
+    /// ```
+    fn mul(self, other: Matrix<T>) -> Self::Output {
+        dot_matrices(&self, &other).unwrap()
+    }
+}
+
+impl<T: Copy + Default + Mul<Output = T>> Mul<T> for Matrix<T> {
+    type Output = Matrix<T>;
+
+    /// Allows the matrix to be multiplied to a scalar
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let matrix2 = matrix * 2;
+    ///
+    /// assert_eq!(matrix2.as_slice(), [2, 4, 6, 8, 10, 12]);
+    /// ```
+    fn mul(self, scalar: T) -> Self::Output {
+        mul_matrix_with_scalar(&self, scalar)
     }
 }
 
