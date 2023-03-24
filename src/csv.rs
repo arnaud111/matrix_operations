@@ -9,6 +9,24 @@
 //! 3,4
 //! 5,6
 //! ```
+//!
+//! # Usage
+//!
+//! ```
+//! use matrix_operations::csv::{load_matrix_from_csv, write_matrix_to_csv};
+//!
+//! let path = "resources/test_read.csv";
+//! let separator = ",";
+//!
+//! let mut matrix = load_matrix_from_csv::<u32>(path, separator).unwrap();
+//!
+//! matrix[0][0] = 10;
+//! matrix[0][1] = 20;
+//!
+//! matrix.add_row(matrix.shape().0).unwrap();
+//!
+//! write_matrix_to_csv(&matrix, "resources/test_write.csv", separator).unwrap();
+//! ```
 
 use std::error::Error;
 use std::fmt::Display;

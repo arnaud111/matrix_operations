@@ -1,4 +1,25 @@
 //! This module contains functions for matrix operations
+//!
+//! # Usage
+//!
+//! ```
+//! use matrix_operations::Matrix;
+//! use matrix_operations::operations::*;
+//!
+//! let data = vec![1, 2, 3, 4, 5, 6];
+//! let shape = (2, 3);
+//! let matrix1 = Matrix::new(data, shape).unwrap();
+//!
+//! let matrix2 = transpose_matrix(&matrix1);
+//!
+//! let matrix3 = mul_matrix_with_scalar(&add_matrix_with_scalar(&matrix1, 5), 2);
+//!
+//! let matrix_operations_dot = dot_matrices(&matrix1, &matrix2);
+//!
+//! let matrix_operations_add = add_matrices(&matrix1, &matrix3);
+//! let matrix_operations_sub = sub_matrices(&matrix1, &matrix3);
+//! ```
+//!
 
 use std::error::Error;
 use std::ops::{Add, AddAssign, Div, Mul, Sub};
