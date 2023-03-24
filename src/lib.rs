@@ -808,6 +808,50 @@ impl<T: Default + Copy> Matrix<T> {
         Ok(())
     }
 
+    /// Remove a column from the matrix
+    /// The column will be removed from the index specified
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// matrix.remove_column(1).unwrap();
+    ///
+    /// assert_eq!(matrix.shape(), (2, 2));
+    /// assert_eq!(matrix.as_slice(), [1, 3, 4, 6]);
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// If the column index is out of bounds, an error will be returned
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let result = matrix.remove_column(3);
+    ///
+    /// assert!(result.is_err());
+    /// ```
+    pub fn remove_column(&mut self, index: usize) -> Result<(), Box<dyn Error>> {
+        if index >= self.shape.1 {
+            return Err("Column index out of bounds".into());
+        }
+        self.shape.1 -= 1;
+        for i in 0..self.shape.0 {
+            self.data.remove((i * self.shape.1) + index);
+        }
+        Ok(())
+    }
+
     /// Add a row to the matrix
     /// The row will be added to the index specified
     ///
