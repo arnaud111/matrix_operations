@@ -440,6 +440,31 @@ impl<T: Default + Copy> Matrix<T> {
         self.data.clone()
     }
 
+    /// Returns the matrix as a 2 dimensional vector
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// assert_eq!(matrix.as_2d_vec(), vec![vec![1, 2, 3], vec![4, 5, 6]]);
+    /// ```
+    pub fn as_2d_vec(&self) -> Vec<Vec<T>> {
+        let mut vec = Vec::new();
+        for i in 0..self.shape.0 {
+            let mut row = Vec::new();
+            for j in 0..self.shape.1 {
+                row.push(self[i][j]);
+            }
+            vec.push(row);
+        }
+        vec
+    }
+
     /// Returns the shape of the matrix
     ///
     /// # Examples
