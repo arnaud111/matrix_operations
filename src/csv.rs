@@ -73,15 +73,15 @@ pub fn load_matrix_from_csv<T: Default + Copy + FromStr>(path: &str, separator: 
 /// let matrix = matrix_operations::Matrix::new(vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0], (3, 2)).unwrap();
 /// let path = "resources/test_write.csv";
 ///
-/// write_matrix_to_csv(&matrix, path).unwrap();
+/// write_matrix_to_csv(&matrix, path, ",").unwrap();
 /// ```
-pub fn write_matrix_to_csv<T: Display>(matrix: &Matrix<T>, path: &str) -> Result<(), Box<dyn Error>> {
+pub fn write_matrix_to_csv<T: Display>(matrix: &Matrix<T>, path: &str, separator: &str) -> Result<(), Box<dyn Error>> {
     let mut file = File::create(path)?;
     let mut header = String::new();
     for i in 0..matrix.shape.1 {
         header.push_str(&format!("col_{}", i));
         if i != matrix.shape.1 - 1 {
-            header.push_str(",");
+            header.push_str(separator);
         }
     }
     header.push_str("\n");
@@ -91,7 +91,64 @@ pub fn write_matrix_to_csv<T: Display>(matrix: &Matrix<T>, path: &str) -> Result
         for j in 0..matrix.shape.1 {
             row.push_str(&format!("{}", matrix[i][j]));
             if j != matrix.shape.1 - 1 {
-                row.push_str(",");
+                row.push_str(separator);
+            }
+        }
+        row.push_str("\n");
+        file.write_all(row.as_bytes())?;
+    }
+    Ok(())
+}
+
+/// Write a Matrix to a CSV file with headers.
+///
+/// # Examples
+///
+/// ```
+/// use matrix_operations::csv::write_matrix_to_csv_with_headers;
+///
+/// let matrix = matrix_operations::Matrix::new(vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0], (3, 2)).unwrap();
+/// let path = "resources/test_write_headers.csv";
+/// let headers = vec!["col_1_header".to_string(), "col_2_header".to_string()];
+///
+/// write_matrix_to_csv_with_headers(&matrix, path, ",", headers).unwrap();
+/// ```
+///
+/// # Errors
+///
+/// This function will return an error if the number of headers does not match the number of columns in the matrix.
+///
+/// ```
+/// use matrix_operations::csv::write_matrix_to_csv_with_headers;
+///
+/// let matrix = matrix_operations::Matrix::new(vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0], (3, 2)).unwrap();
+/// let path = "resources/test_write_headers.csv";
+/// let headers = vec!["col_1_header".to_string()];
+///
+/// let result = write_matrix_to_csv_with_headers(&matrix, path, ",", headers);
+///
+/// assert!(result.is_err());
+/// ```
+pub fn write_matrix_to_csv_with_headers<T: Display>(matrix: &Matrix<T>, path: &str, separator: &str, headers: Vec<String>) -> Result<(), Box<dyn Error>> {
+    if headers.len() != matrix.shape.1 {
+        return Err("The number of headers does not match the number of columns in the matrix.".into());
+    }
+    let mut file = File::create(path)?;
+    let mut header = String::new();
+    for i in 0..matrix.shape.1 {
+        header.push_str(&format!("{}", headers[i]));
+        if i != matrix.shape.1 - 1 {
+            header.push_str(separator);
+        }
+    }
+    header.push_str("\n");
+    file.write_all(header.as_bytes())?;
+    for i in 0..matrix.shape.0 {
+        let mut row = String::new();
+        for j in 0..matrix.shape.1 {
+            row.push_str(&format!("{}", matrix[i][j]));
+            if j != matrix.shape.1 - 1 {
+                row.push_str(separator);
             }
         }
         row.push_str("\n");
