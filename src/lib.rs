@@ -31,7 +31,7 @@ pub mod csv;
 
 use std::error::Error;
 use std::fmt::{Display, Formatter};
-use std::ops::{Add, Index, IndexMut, Range};
+use std::ops::{Add, Index, IndexMut, Range, Sub};
 use crate::operations::*;
 
 /// A matrix struct that can be used to perform matrix operations.
@@ -195,6 +195,7 @@ impl<T: Copy + Default + Add<Output = T>> Add for Matrix<T> {
     type Output = Matrix<T>;
 
     /// Allows the matrix to be added to another matrix
+    ///
     /// Works too for adding a matrix to an other matrix with 1 row or 1 column
     ///
     /// # Examples
@@ -306,6 +307,125 @@ impl<T: Copy + Default + Add<Output = T>> Add<T> for Matrix<T> {
     /// ```
     fn add(self, scalar: T) -> Matrix<T> {
         add_matrix_with_scalar(&self, scalar)
+    }
+}
+
+impl<T: Copy + Default + Sub<Output= T>> Sub for Matrix<T> {
+    type Output = Matrix<T>;
+
+    /// Allows the matrix to be subtracted to another matrix
+    ///
+    /// Works too for subtracting a matrix to an other matrix with 1 row or 1 column
+    ///
+    /// # Examples
+    ///
+    /// Same shape :
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let data2 = vec![1, 2, 3, 4, 5, 6];
+    /// let shape2 = (2, 3);
+    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    ///
+    /// let matrix3 = matrix - matrix2;
+    ///
+    /// assert_eq!(matrix3.as_slice(), [0, 0, 0, 0, 0, 0]);
+    /// ```
+    ///
+    /// Matrix with 1 row :
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let data2 = vec![1, 2, 3];
+    /// let shape2 = (1, 3);
+    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    ///
+    /// let matrix3 = matrix - matrix2;
+    ///
+    /// assert_eq!(matrix3.as_slice(), [0, 0, 0, 3, 3, 3]);
+    /// ```
+    ///
+    /// Matrix with 1 column :
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let data2 = vec![1, 2];
+    /// let shape2 = (2, 1);
+    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    ///
+    /// let matrix3 = matrix - matrix2;
+    ///
+    /// assert_eq!(matrix3.as_slice(), [0, 1, 2, 2, 3, 4]);
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if the matrices have different shapes and no one of them has 1 row or 1 column
+    ///
+    /// ```should_panic
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let data2 = vec![1, 2, 3, 4, 5, 6];
+    /// let shape2 = (3, 2);
+    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    ///
+    /// let matrix3 = matrix - matrix2;
+    /// ```
+    fn sub(self, other: Self) -> Self::Output {
+        if self.shape != other.shape {
+            return if other.shape.0 == 1 {
+                sub_matrix_with_1row_matrix(&self, &other).unwrap()
+            } else if other.shape.1 == 1 {
+                sub_matrix_with_1col_matrix(&self, &other).unwrap()
+            } else if self.shape.0 == 1 {
+                sub_matrix_with_1row_matrix(&other, &self).unwrap()
+            } else {
+                sub_matrix_with_1col_matrix(&other, &self).unwrap()
+            }
+        }
+        sub_matrices(&self, &other).unwrap()
+    }
+}
+
+impl<T: Copy + Default + Sub<Output= T>> Sub<T> for Matrix<T> {
+    type Output = Matrix<T>;
+
+    /// Allows the matrix to be subtracted to a scalar
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let matrix2 = matrix - 1;
+    ///
+    /// assert_eq!(matrix2.as_slice(), [0, 1, 2, 3, 4, 5]);
+    /// ```
+    fn sub(self, scalar: T) -> Self::Output {
+        sub_matrix_with_scalar(&self, scalar)
     }
 }
 
