@@ -27,6 +27,7 @@
 //!
 
 pub mod operations;
+pub mod csv;
 
 use std::error::Error;
 use std::fmt::{Display, Formatter};
