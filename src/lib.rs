@@ -731,6 +731,83 @@ impl<T: Default + Copy> Matrix<T> {
         Ok(())
     }
 
+    /// Add all matrix column to the first matrix
+    /// The column will be added to the end of the matrix
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let data2 = vec![10, 20, 30, 40];
+    /// let shape2 = (2, 2);
+    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    ///
+    /// matrix.add_column_from_matrix(&matrix2).unwrap();
+    /// assert_eq!(matrix.shape(), (2, 5));
+    /// assert_eq!(matrix.as_slice(), [1, 2, 3, 10, 20, 4, 5, 6, 30, 40]);
+    /// ```
+    ///
+    /// If the first matrix is empty, a new matrix will be created with the matrix data
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data: Vec<u32> = Vec::new();
+    /// let shape = (0, 0);
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let data2 = vec![10, 20];
+    /// let shape2 = (2, 1);
+    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    ///
+    /// matrix.add_column_from_matrix(&matrix2).unwrap();
+    ///
+    /// assert_eq!(matrix.shape(), (2, 1));
+    /// assert_eq!(matrix.as_slice(), [10, 20]);
+    /// ```
+    ///
+    /// # Errors
+    ///
+    /// If the number of rows does not match, an error will be returned
+    ///
+    /// ```
+    /// use matrix_operations::Matrix;
+    ///
+    /// let data = vec![1, 2, 3, 4, 5, 6];
+    /// let shape = (2, 3);
+    /// let mut matrix = Matrix::new(data, shape).unwrap();
+    ///
+    /// let data2 = vec![10, 20, 30];
+    /// let shape2 = (3, 1);
+    /// let matrix2 = Matrix::new(data2, shape2).unwrap();
+    ///
+    /// let result = matrix.add_column_from_matrix(&matrix2);
+    ///
+    /// assert!(result.is_err());
+    /// ```
+    pub fn add_column_from_matrix(&mut self, matrix: &Matrix<T>) -> Result<(), Box<dyn Error>> {
+        if self.shape.0 == 0 {
+            self.shape.0 = matrix.shape.0;
+            self.shape.1 = matrix.shape.1;
+            self.data = matrix.data.clone();
+            return Ok(());
+        }
+        if self.shape.0 != matrix.shape().0 {
+            return Err("Matrix rows does not match".into());
+        }
+        self.shape.1 += matrix.shape().1;
+        for i in 0..self.shape.0 {
+            for j in 0..matrix.shape().1 {
+                self.data.insert((i * self.shape.1) + self.shape.1 - matrix.shape().1 + j, matrix.data[i * matrix.shape().1 + j]);
+            }
+        }
+        Ok(())
+    }
+
     /// Add a row to the matrix
     /// The row will be added to the index specified
     ///
