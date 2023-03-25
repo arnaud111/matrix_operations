@@ -71,7 +71,7 @@ impl<T: Copy + Default + AddAssign> Matrix<T> {
 
 impl<T: Copy + Default + AddAssign> AddAssign<T> for Matrix<T> {
 
-    /// Allows the matrix to be added to a scalar
+    /// Allows the matrix to be added to a scalar with operator `+=`
     ///
     /// # Examples
     ///
@@ -92,7 +92,7 @@ impl<T: Copy + Default + AddAssign> AddAssign<T> for Matrix<T> {
 
 impl<T: Copy + Default + AddAssign> AddAssign for Matrix<T> {
 
-    /// Allows the matrix to be added to another matrix
+    /// Allows the matrix to be added to another matrix with operator `+=`
     /// Matrices must have the same shape
     ///
     /// # Examples

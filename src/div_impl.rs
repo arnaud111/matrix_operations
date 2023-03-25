@@ -1,4 +1,4 @@
-use std::ops::Div;
+use std::ops::{Div, DivAssign};
 use crate::{apply_to_matrix_with_param, div_matrix_with_scalar, Matrix};
 
 impl<T: Copy + Default + Div<Output = T>> Div<T> for Matrix<T> {
@@ -20,6 +20,50 @@ impl<T: Copy + Default + Div<Output = T>> Div<T> for Matrix<T> {
     /// ```
     fn div(self, scalar: T) -> Self::Output {
         div_matrix_with_scalar(&self, scalar)
+    }
+}
+
+impl<T: Copy + Default + DivAssign> Matrix<T> {
+
+    /// Allows the matrix to be divided to a scalar
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// matrix1.div_scalar(2);
+    ///
+    /// assert_eq!(matrix1, matrix![[0, 1, 1], [2, 2, 3]]);
+    /// ```
+    pub fn div_scalar(&mut self, scalar: T) {
+        for i in 0..self.data.len() {
+            self.data[i] /= scalar;
+        }
+    }
+}
+
+impl<T: Copy + Default + DivAssign> DivAssign<T> for Matrix<T> {
+
+    /// Allows the matrix to be divided to a scalar with operator `/=`
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// matrix1 /= 2;
+    ///
+    /// assert_eq!(matrix1, matrix![[0, 1, 1], [2, 2, 3]]);
+    /// ```
+    fn div_assign(&mut self, scalar: T) {
+        self.div_scalar(scalar);
     }
 }
 
