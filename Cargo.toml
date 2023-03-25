@@ -5,7 +5,6 @@ authors = ["arnaud111"]
 edition = "2021"
 description = "A library to perform matrix operations"
 license = "MIT"
-documentation = "https://docs.rs/matrix_operations"
 repository = "https://github.com/arnaud111/matrix_operations"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
