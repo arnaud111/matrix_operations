@@ -1,8 +1,8 @@
-#Matrix Operations
+# Matrix Operations
 
 Matrix_Operations is a Rust crate for performing various matrix operations. It provides a set of functions for performing common matrix operations.
 
-##Installation
+## Installation
 
 Add the following to your Cargo.toml file:
 
@@ -11,7 +11,7 @@ Add the following to your Cargo.toml file:
 matrix_operations = "0.1.0"
 ```
 
-##Usage
+## Usage
 
 This crate provides a wide range of operations that can be performed on matrices. Here are some examples of common operations:
 
@@ -60,7 +60,7 @@ let matrix2 = load_matrix_from_csv("resources/matrix.csv", ",").unwrap();
 assert_eq!(matrix1, matrix2);
 ```
 
-##Features
+## Features
 - Create a matrix
 - Transpose a matrix
 - Multiply / Add / Subtract two matrices
