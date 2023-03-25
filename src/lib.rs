@@ -31,10 +31,11 @@ pub mod csv;
 mod macro_matrix;
 mod add_impl;
 mod sub_impl;
+mod mul_impl;
 
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter};
-use std::ops::{AddAssign, Div, Index, IndexMut, Mul, Range};
+use std::ops::{Div, Index, IndexMut, Range};
 use crate::operations::*;
 
 /// A matrix struct that can be used to perform matrix operations.
@@ -273,69 +274,6 @@ impl<T> Display for Matrix<T> where T: Display {
             s.push_str("\n");
         }
         write!(f, "{}", s)
-    }
-}
-
-impl<T: Copy + Default + Mul<Output = T> + AddAssign> Mul for Matrix<T> {
-    type Output = Matrix<T>;
-
-    /// Allows the matrix to be multiplied to another matrix
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use matrix_operations::matrix;
-    ///
-    /// let matrix1 = matrix![[1, 2, 3],
-    ///                    [4, 5, 6]];
-    ///
-    /// let matrix2 = matrix![[1, 2],
-    ///                       [3, 4],
-    ///                       [5, 6]];
-    ///
-    /// let matrix3 = matrix1 * matrix2;
-    ///
-    /// assert_eq!(matrix3, matrix![[22, 28], [49, 64]]);
-    /// ```
-    ///
-    /// # Panics
-    ///
-    /// Panics if the matrices can't be multiplied
-    ///
-    /// ```should_panic
-    /// use matrix_operations::matrix;
-    ///
-    /// let matrix1 = matrix![[1, 2, 3], [4, 5, 6]];
-    ///
-    /// let matrix2 = matrix![[1, 2, 3], [4, 5, 6]];
-    ///
-    /// // Panics
-    /// let matrix3 = matrix1 * matrix2;
-    /// ```
-    fn mul(self, other: Matrix<T>) -> Self::Output {
-        dot_matrices(&self, &other).unwrap()
-    }
-}
-
-impl<T: Copy + Default + Mul<Output = T>> Mul<T> for Matrix<T> {
-    type Output = Matrix<T>;
-
-    /// Allows the matrix to be multiplied to a scalar
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use matrix_operations::matrix;
-    ///
-    /// let matrix1 = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
-    ///
-    /// let matrix2 = matrix1 * 2;
-    ///
-    /// assert_eq!(matrix2, matrix![[2, 4, 6], [8, 10, 12]]);
-    /// ```
-    fn mul(self, scalar: T) -> Self::Output {
-        mul_matrix_with_scalar(&self, scalar)
     }
 }
 
