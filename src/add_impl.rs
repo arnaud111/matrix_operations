@@ -1,5 +1,137 @@
-use std::ops::Add;
+use std::ops::{Add, AddAssign};
 use crate::{add_matrices, add_matrix_with_1col_matrix, add_matrix_with_1row_matrix, add_matrix_with_scalar, Matrix};
+
+impl<T: Copy + Default + AddAssign> Matrix<T> {
+
+    /// Adds a scalar to the matrix
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// matrix1.add_scalar(1);
+    ///
+    /// assert_eq!(matrix1, matrix![[2, 3, 4], [5, 6, 7]]);
+    /// ```
+    pub fn add_scalar(&mut self, scalar: T) {
+        for i in 0..self.data.len() {
+            self.data[i] += scalar;
+        }
+    }
+
+    /// Adds a matrix to the matrix
+    /// Matrices must have the same shape
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// let matrix2 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
+    ///
+    /// matrix1.add_matrix(&matrix2);
+    ///
+    /// assert_eq!(matrix1, matrix![[2, 4, 6], [8, 10, 12]]);
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if the matrices have different shapes
+    ///
+    /// ```should_panic
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// let matrix2 = matrix![[1, 2],
+    ///                       [3, 4],
+    ///                       [5, 6]];
+    ///
+    /// // Panics
+    /// matrix1.add_matrix(&matrix2);
+    /// ```
+    pub fn add_matrix(&mut self, other: &Matrix<T>) {
+        if self.shape != other.shape {
+            panic!("The matrices have different shapes");
+        }
+        for i in 0..self.data.len() {
+            self.data[i] += other.data[i];
+        }
+    }
+}
+
+impl<T: Copy + Default + AddAssign> AddAssign<T> for Matrix<T> {
+
+    /// Allows the matrix to be added to a scalar
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// matrix1 += 1;
+    ///
+    /// assert_eq!(matrix1, matrix![[2, 3, 4], [5, 6, 7]]);
+    /// ```
+    fn add_assign(&mut self, scalar: T) {
+        self.add_scalar(scalar);
+    }
+}
+
+impl<T: Copy + Default + AddAssign> AddAssign for Matrix<T> {
+
+    /// Allows the matrix to be added to another matrix
+    /// Matrices must have the same shape
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// let matrix2 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
+    ///
+    /// matrix1 += matrix2;
+    ///
+    /// assert_eq!(matrix1, matrix![[2, 4, 6], [8, 10, 12]]);
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if the matrices have different shapes
+    ///
+    /// ```should_panic
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// let matrix2 = matrix![[1, 2],
+    ///                       [3, 4],
+    ///                       [5, 6]];
+    ///
+    /// // Panics
+    /// matrix1 += matrix2;
+    /// ```
+    fn add_assign(&mut self, other: Self) {
+        self.add_matrix(&other);
+    }
+}
 
 impl<T: Copy + Default + Add<Output = T>> Add for Matrix<T> {
     type Output = Matrix<T>;
