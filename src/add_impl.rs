@@ -178,6 +178,50 @@ impl Add<Matrix<u64>> for u64 {
     }
 }
 
+impl Add<Matrix<u128>> for u128 {
+    type Output = Matrix<u128>;
+
+    /// Allows the matrix to be added to a scalar
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::{matrix, Matrix};
+    ///
+    /// let matrix1: Matrix<u128> = matrix![[1, 2, 3],
+    ///                                    [4, 5, 6]];
+    ///
+    /// let matrix2 = 1 + matrix1;
+    ///
+    /// assert_eq!(matrix2, matrix![[2, 3, 4], [5, 6, 7]]);
+    /// ```
+    fn add(self, matrix: Matrix<u128>) -> Matrix<u128> {
+        add_matrix_with_scalar(&matrix, self)
+    }
+}
+
+impl Add<Matrix<i8>> for i8 {
+    type Output = Matrix<i8>;
+
+    /// Allows the matrix to be added to a scalar
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::{matrix, Matrix};
+    ///
+    /// let matrix1: Matrix<i8> = matrix![[1, 2, 3],
+    ///                                   [4, 5, 6]];
+    ///
+    /// let matrix2 = 1 + matrix1;
+    ///
+    /// assert_eq!(matrix2, matrix![[2, 3, 4], [5, 6, 7]]);
+    /// ```
+    fn add(self, matrix: Matrix<i8>) -> Matrix<i8> {
+        add_matrix_with_scalar(&matrix, self)
+    }
+}
+
 impl Add<Matrix<i16>> for i16 {
     type Output = Matrix<i16>;
 
@@ -240,6 +284,28 @@ impl Add<Matrix<i64>> for i64 {
     /// assert_eq!(matrix2, matrix![[2, 3, 4], [5, 6, 7]]);
     /// ```
     fn add(self, matrix: Matrix<i64>) -> Matrix<i64> {
+        add_matrix_with_scalar(&matrix, self)
+    }
+}
+
+impl Add<Matrix<i128>> for i128 {
+    type Output = Matrix<i128>;
+
+    /// Allows the matrix to be added to a scalar
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::{matrix, Matrix};
+    ///
+    /// let matrix1: Matrix<i128> = matrix![[1, 2, 3],
+    ///                                    [4, 5, 6]];
+    ///
+    /// let matrix2 = 1 + matrix1;
+    ///
+    /// assert_eq!(matrix2, matrix![[2, 3, 4], [5, 6, 7]]);
+    /// ```
+    fn add(self, matrix: Matrix<i128>) -> Matrix<i128> {
         add_matrix_with_scalar(&matrix, self)
     }
 }
