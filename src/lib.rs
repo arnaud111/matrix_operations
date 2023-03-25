@@ -30,10 +30,11 @@ pub mod operations;
 pub mod csv;
 mod macro_matrix;
 mod add_impl;
+mod sub_impl;
 
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter};
-use std::ops::{AddAssign, Div, Index, IndexMut, Mul, Range, Sub};
+use std::ops::{AddAssign, Div, Index, IndexMut, Mul, Range};
 use crate::operations::*;
 
 /// A matrix struct that can be used to perform matrix operations.
@@ -272,117 +273,6 @@ impl<T> Display for Matrix<T> where T: Display {
             s.push_str("\n");
         }
         write!(f, "{}", s)
-    }
-}
-
-impl<T: Copy + Default + Sub<Output= T>> Sub for Matrix<T> {
-    type Output = Matrix<T>;
-
-    /// Allows the matrix to be subtracted to another matrix
-    ///
-    /// Works too for subtracting a matrix to an other matrix with 1 row or 1 column
-    ///
-    /// # Examples
-    ///
-    /// Same shape :
-    ///
-    /// ```
-    /// use matrix_operations::matrix;
-    ///
-    /// let matrix1 = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
-    ///
-    /// let matrix2 = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
-    ///
-    /// let matrix3 = matrix1 - matrix2;
-    ///
-    /// assert_eq!(matrix3, matrix![[0, 0, 0], [0, 0, 0]]);
-    /// ```
-    ///
-    /// Matrix with 1 row :
-    ///
-    /// ```
-    /// use matrix_operations::matrix;
-    ///
-    /// let matrix1 = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
-    ///
-    /// let matrix2 = matrix![[1, 2, 3]];
-    ///
-    /// let matrix3 = matrix1 - matrix2;
-    ///
-    /// assert_eq!(matrix3, matrix![[0, 0, 0], [3, 3, 3]]);
-    /// ```
-    ///
-    /// Matrix with 1 column :
-    ///
-    /// ```
-    /// use matrix_operations::matrix;
-    ///
-    /// let matrix1 = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
-    ///
-    /// let matrix2 = matrix![[1],
-    ///                       [2]];
-    ///
-    /// let matrix3 = matrix1 - matrix2;
-    ///
-    /// assert_eq!(matrix3, matrix![[0, 1, 2], [2, 3, 4]]);
-    /// ```
-    ///
-    /// # Panics
-    ///
-    /// Panics if the matrices have different shapes and no one of them has 1 row or 1 column
-    ///
-    /// ```should_panic
-    /// use matrix_operations::matrix;
-    ///
-    /// let matrix1 = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
-    ///
-    /// let matrix2 = matrix![[1, 2],
-    ///                       [3, 4],
-    ///                       [5, 6]];
-    ///
-    /// // Panics
-    /// let matrix3 = matrix1 - matrix2;
-    /// ```
-    fn sub(self, other: Self) -> Self::Output {
-        if self.shape != other.shape {
-            return if other.shape.0 == 1 {
-                sub_matrix_with_1row_matrix(&self, &other).unwrap()
-            } else if other.shape.1 == 1 {
-                sub_matrix_with_1col_matrix(&self, &other).unwrap()
-            } else if self.shape.0 == 1 {
-                sub_matrix_with_1row_matrix(&other, &self).unwrap()
-            } else {
-                sub_matrix_with_1col_matrix(&other, &self).unwrap()
-            }
-        }
-        sub_matrices(&self, &other).unwrap()
-    }
-}
-
-impl<T: Copy + Default + Sub<Output = T>> Sub<T> for Matrix<T> {
-    type Output = Matrix<T>;
-
-    /// Allows the matrix to be subtracted to a scalar
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use matrix_operations::matrix;
-    ///
-    /// let matrix1 = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
-    ///
-    /// let matrix2 = matrix1 - 1;
-    ///
-    /// assert_eq!(matrix2, matrix![[0, 1, 2], [3, 4, 5]]);
-    /// ```
-    fn sub(self, scalar: T) -> Self::Output {
-        sub_matrix_with_scalar(&self, scalar)
     }
 }
 

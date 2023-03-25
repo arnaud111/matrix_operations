@@ -317,6 +317,26 @@ pub fn apply_to_matrix<T: Copy + Default>(matrix: &Matrix<T>, f: fn(T) -> T) -> 
     result
 }
 
+/// Apply a function to each element of the matrix and a parameter
+///
+/// # Examples
+///
+/// ```
+/// use matrix_operations::matrix;
+///
+/// let matrix = matrix![[1, 2, 3], [4, 5, 6]];
+///
+/// let new_matrix = matrix_operations::operations::apply_to_matrix_with_param(&matrix, |x, y| x + y, 2);
+///
+/// assert_eq!(new_matrix, matrix![[3, 4, 5], [6, 7, 8]]);
+pub fn apply_to_matrix_with_param<T: Copy + Default>(matrix: &Matrix<T>, f: fn(T, T) -> T, param: T) -> Matrix<T> {
+    let mut result = Matrix::new_default(matrix.shape);
+    for i in 0..matrix.data.len() {
+        result.data[i] = f(matrix.data[i], param);
+    }
+    result
+}
+
 /// Apply a function to each element of a column of the matrix and return a new matrix
 /// The function takes a Vec of the column elements and returns a Vec of the new column elements
 /// The function must return a Vec of the same length as the column
