@@ -123,7 +123,7 @@ impl Add<Matrix<u16>> for u16 {
     /// use matrix_operations::{matrix, Matrix};
     ///
     /// let matrix1: Matrix<u16> = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
+    ///                                    [4, 5, 6]];
     ///
     /// let matrix2 = 1 + matrix1;
     ///
@@ -189,7 +189,7 @@ impl Add<Matrix<u128>> for u128 {
     /// use matrix_operations::{matrix, Matrix};
     ///
     /// let matrix1: Matrix<u128> = matrix![[1, 2, 3],
-    ///                                    [4, 5, 6]];
+    ///                                     [4, 5, 6]];
     ///
     /// let matrix2 = 1 + matrix1;
     ///
@@ -299,7 +299,7 @@ impl Add<Matrix<i128>> for i128 {
     /// use matrix_operations::{matrix, Matrix};
     ///
     /// let matrix1: Matrix<i128> = matrix![[1, 2, 3],
-    ///                                    [4, 5, 6]];
+    ///                                     [4, 5, 6]];
     ///
     /// let matrix2 = 1 + matrix1;
     ///
@@ -344,7 +344,7 @@ impl Add<Matrix<f64>> for f64 {
     /// use matrix_operations::{matrix, Matrix};
     ///
     /// let matrix1: Matrix<f64> = matrix![[1.0, 2.0, 3.0],
-    ///                       [4.0, 5.0, 6.0]];
+    ///                                    [4.0, 5.0, 6.0]];
     ///
     /// let matrix2 = 1.0 + matrix1;
     ///

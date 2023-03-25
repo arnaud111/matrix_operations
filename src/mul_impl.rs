@@ -12,7 +12,7 @@ impl<T: Copy + Default + Mul<Output = T> + AddAssign> Mul for Matrix<T> {
     /// use matrix_operations::matrix;
     ///
     /// let matrix1 = matrix![[1, 2, 3],
-    ///                    [4, 5, 6]];
+    ///                       [4, 5, 6]];
     ///
     /// let matrix2 = matrix![[1, 2],
     ///                       [3, 4],
@@ -30,9 +30,11 @@ impl<T: Copy + Default + Mul<Output = T> + AddAssign> Mul for Matrix<T> {
     /// ```should_panic
     /// use matrix_operations::matrix;
     ///
-    /// let matrix1 = matrix![[1, 2, 3], [4, 5, 6]];
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
     ///
-    /// let matrix2 = matrix![[1, 2, 3], [4, 5, 6]];
+    /// let matrix2 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
     ///
     /// // Panics
     /// let matrix3 = matrix1 * matrix2;
@@ -75,7 +77,7 @@ impl Mul<Matrix<u8>> for u8 {
     /// use matrix_operations::{matrix, Matrix};
     ///
     /// let matrix1: Matrix<u8> = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
+    ///                                   [4, 5, 6]];
     ///
     /// let matrix2 = 2 * matrix1;
     ///
@@ -97,7 +99,7 @@ impl Mul<Matrix<i8>> for i8 {
     /// use matrix_operations::{matrix, Matrix};
     ///
     /// let matrix1: Matrix<i8> = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
+    ///                                   [4, 5, 6]];
     ///
     /// let matrix2 = 2 * matrix1;
     ///
@@ -119,7 +121,7 @@ impl Mul<Matrix<u16>> for u16 {
     /// use matrix_operations::{matrix, Matrix};
     ///
     /// let matrix1: Matrix<u16> = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
+    ///                                    [4, 5, 6]];
     ///
     /// let matrix2 = 2 * matrix1;
     ///
@@ -141,7 +143,7 @@ impl Mul<Matrix<i16>> for i16 {
     /// use matrix_operations::{matrix, Matrix};
     ///
     /// let matrix1: Matrix<i16> = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
+    ///                                    [4, 5, 6]];
     ///
     /// let matrix2 = 2 * matrix1;
     ///
@@ -163,7 +165,7 @@ impl Mul<Matrix<u32>> for u32 {
     /// use matrix_operations::{matrix, Matrix};
     ///
     /// let matrix1: Matrix<u32> = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
+    ///                                    [4, 5, 6]];
     ///
     /// let matrix2 = 2 * matrix1;
     ///
@@ -185,7 +187,7 @@ impl Mul<Matrix<i32>> for i32 {
     /// use matrix_operations::{matrix, Matrix};
     ///
     /// let matrix1: Matrix<i32> = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
+    ///                                    [4, 5, 6]];
     ///
     /// let matrix2 = 2 * matrix1;
     ///
@@ -207,7 +209,7 @@ impl Mul<Matrix<u64>> for u64 {
     /// use matrix_operations::{matrix, Matrix};
     ///
     /// let matrix1: Matrix<u64> = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
+    ///                                    [4, 5, 6]];
     ///
     /// let matrix2 = 2 * matrix1;
     ///
@@ -229,7 +231,7 @@ impl Mul<Matrix<i64>> for i64 {
     /// use matrix_operations::{matrix, Matrix};
     ///
     /// let matrix1: Matrix<i64> = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
+    ///                                    [4, 5, 6]];
     ///
     /// let matrix2 = 2 * matrix1;
     ///
@@ -251,7 +253,7 @@ impl Mul<Matrix<u128>> for u128 {
     /// use matrix_operations::{matrix, Matrix};
     ///
     /// let matrix1: Matrix<u128> = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
+    ///                                     [4, 5, 6]];
     ///
     /// let matrix2 = 2 * matrix1;
     ///
@@ -273,7 +275,7 @@ impl Mul<Matrix<i128>> for i128 {
     /// use matrix_operations::{matrix, Matrix};
     ///
     /// let matrix1: Matrix<i128> = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
+    ///                                     [4, 5, 6]];
     ///
     /// let matrix2 = 2 * matrix1;
     ///
@@ -295,7 +297,7 @@ impl Mul<Matrix<f32>> for f32 {
     /// use matrix_operations::{matrix, Matrix};
     ///
     /// let matrix1: Matrix<f32> = matrix![[1.0, 2.0, 3.0],
-    ///                       [4.0, 5.0, 6.0]];
+    ///                                    [4.0, 5.0, 6.0]];
     ///
     /// let matrix2 = 2.0 * matrix1;
     ///
@@ -318,7 +320,7 @@ impl Mul<Matrix<f64>> for f64 {
     /// use matrix_operations::{matrix, Matrix};
     ///
     /// let matrix1: Matrix<f64> = matrix![[1.0, 2.0, 3.0],
-    ///                       [4.0, 5.0, 6.0]];
+    ///                                    [4.0, 5.0, 6.0]];
     ///
     /// let matrix2 = 2.0 * matrix1;
     ///

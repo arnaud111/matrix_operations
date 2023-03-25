@@ -32,10 +32,11 @@ mod macro_matrix;
 mod add_impl;
 mod sub_impl;
 mod mul_impl;
+mod div_impl;
 
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter};
-use std::ops::{Div, Index, IndexMut, Range};
+use std::ops::{Index, IndexMut, Range};
 use crate::operations::*;
 
 /// A matrix struct that can be used to perform matrix operations.
@@ -274,28 +275,6 @@ impl<T> Display for Matrix<T> where T: Display {
             s.push_str("\n");
         }
         write!(f, "{}", s)
-    }
-}
-
-impl<T: Copy + Default + Div<Output = T>> Div<T> for Matrix<T> {
-    type Output = Matrix<T>;
-
-    /// Allows the matrix to be divided to a scalar
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use matrix_operations::matrix;
-    ///
-    /// let matrix1 = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
-    ///
-    /// let matrix2 = matrix1 / 2;
-    ///
-    /// assert_eq!(matrix2, matrix![[0, 1, 1], [2, 2, 3]]);
-    /// ```
-    fn div(self, scalar: T) -> Self::Output {
-        div_matrix_with_scalar(&self, scalar)
     }
 }
 
