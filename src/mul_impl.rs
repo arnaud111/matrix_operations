@@ -1,5 +1,133 @@
-use std::ops::{AddAssign, Mul};
+use std::ops::{AddAssign, Mul, MulAssign};
 use crate::{dot_matrices, Matrix, mul_matrix_with_scalar};
+
+impl<T: Copy + Default + MulAssign> Matrix<T> {
+
+    /// Allows the matrix to be multiplied to a scalar with operator `*=`
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// matrix1.mul_scalar(2);
+    ///
+    /// assert_eq!(matrix1, matrix![[2, 4, 6], [8, 10, 12]]);
+    /// ```
+    pub fn mul_scalar(&mut self, scalar: T) {
+        for i in 0..self.data.len() {
+            self.data[i] *= scalar;
+        }
+    }
+}
+
+impl<T: Copy + Default + Mul<Output = T> + AddAssign> Matrix<T> {
+
+    /// Allows the matrix to be multiplied to another matrix
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// let matrix2 = matrix![[1, 2],
+    ///                       [3, 4],
+    ///                       [5, 6]];
+    ///
+    /// matrix1.dot_matrix(&matrix2);
+    ///
+    /// assert_eq!(matrix1, matrix![[22, 28], [49, 64]]);
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if the matrices can't be multiplied
+    ///
+    /// ```should_panic
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// let matrix2 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
+    ///
+    /// // Panics
+    /// matrix1.dot_matrix(&matrix2);
+    /// ```
+    pub fn dot_matrix(&mut self, other: &Matrix<T>) {
+        *self = dot_matrices(self, other).unwrap();
+    }
+}
+
+impl<T: Copy + Default + MulAssign> MulAssign<T> for Matrix<T> {
+
+    /// Allows the matrix to be multiplied to a scalar with operator `*=`
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// matrix1 *= 2;
+    ///
+    /// assert_eq!(matrix1, matrix![[2, 4, 6], [8, 10, 12]]);
+    /// ```
+    fn mul_assign(&mut self, scalar: T) {
+        self.mul_scalar(scalar);
+    }
+}
+
+impl<T: Copy + Default + Mul<Output = T> + AddAssign> MulAssign for Matrix<T> {
+
+    /// Allows the matrix to be multiplied to another matrix with operator `*=`
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// let matrix2 = matrix![[1, 2],
+    ///                       [3, 4],
+    ///                       [5, 6]];
+    ///
+    /// matrix1 *= matrix2;
+    ///
+    /// assert_eq!(matrix1, matrix![[22, 28], [49, 64]]);
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if the matrices can't be multiplied
+    ///
+    /// ```should_panic
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// let matrix2 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
+    ///
+    /// // Panics
+    /// matrix1 *= matrix2;
+    /// ```
+    fn mul_assign(&mut self, matrix: Self) {
+        self.dot_matrix(&matrix);
+    }
+}
 
 impl<T: Copy + Default + Mul<Output = T> + AddAssign> Mul for Matrix<T> {
     type Output = Matrix<T>;
