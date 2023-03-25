@@ -1,5 +1,133 @@
-use std::ops::Sub;
+use std::ops::{Sub, SubAssign};
 use crate::{apply_to_matrix_with_param, Matrix, sub_matrices, sub_matrix_with_1col_matrix, sub_matrix_with_1row_matrix, sub_matrix_with_scalar};
+
+impl<T: Copy + Default + SubAssign> Matrix<T> {
+
+    /// Allows the matrix to be subtracted to a scalar with operator `-=`
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// matrix1.sub_scalar(2);
+    ///
+    /// assert_eq!(matrix1, matrix![[-1, 0, 1], [2, 3, 4]]);
+    /// ```
+    pub fn sub_scalar(&mut self, scalar: T) {
+        for i in 0..self.data.len() {
+            self.data[i] -= scalar;
+        }
+    }
+
+    /// Allows the matrix to be subtracted to another matrix
+    /// Matrices must have the same shape
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// let matrix2 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
+    ///
+    /// matrix1.sub_matrix(&matrix2);
+    ///
+    /// assert_eq!(matrix1, matrix![[0, 0, 0], [0, 0, 0]]);
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if the matrices have different shapes
+    ///
+    /// ```should_panic
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// let matrix2 = matrix![[1, 2, 3]];
+    ///
+    /// // Panics
+    /// matrix1.sub_matrix(&matrix2);
+    /// ```
+    pub fn sub_matrix(&mut self, matrix: &Matrix<T>) {
+        if self.shape != matrix.shape {
+            panic!("The matrices have different shapes");
+        }
+        for i in 0..self.data.len() {
+            self.data[i] -= matrix.data[i];
+        }
+    }
+}
+
+impl<T: Copy + Default + SubAssign> SubAssign<T> for Matrix<T> {
+
+    /// Allows the matrix to be subtracted to a scalar with operator `-=`
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// matrix1 -= 2;
+    ///
+    /// assert_eq!(matrix1, matrix![[-1, 0, 1], [2, 3, 4]]);
+    /// ```
+    fn sub_assign(&mut self, scalar: T) {
+        self.sub_scalar(scalar);
+    }
+}
+
+impl<T: Copy + Default + SubAssign> SubAssign for Matrix<T> {
+
+    /// Allows the matrix to be subtracted to another matrix with operator `-=`
+    /// Matrices must have the same shape
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// let matrix2 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
+    ///
+    /// matrix1 -= matrix2;
+    ///
+    /// assert_eq!(matrix1, matrix![[0, 0, 0], [0, 0, 0]]);
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if the matrices have different shapes
+    ///
+    /// ```should_panic
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// let matrix2 = matrix![[1, 2, 3]];
+    ///
+    /// // Panics
+    /// matrix1 -= matrix2;
+    /// ```
+    fn sub_assign(&mut self, matrix: Self) {
+        self.sub_matrix(&matrix);
+    }
+}
 
 impl<T: Copy + Default + Sub<Output= T>> Sub for Matrix<T> {
     type Output = Matrix<T>;
