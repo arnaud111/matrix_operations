@@ -3,12 +3,11 @@
 //! # Usage
 //!
 //! ```
-//! use matrix_operations::Matrix;
+//! use matrix_operations::matrix;
 //! use matrix_operations::operations::*;
 //!
-//! let data = vec![1, 2, 3, 4, 5, 6];
-//! let shape = (2, 3);
-//! let matrix1 = Matrix::new(data, shape).unwrap();
+//! let matrix1 = matrix![[1, 2, 3],
+//!                       [4, 5, 6]];
 //!
 //! let matrix2 = transpose_matrix(&matrix1);
 //!
@@ -30,22 +29,15 @@ use crate::Matrix;
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::transpose_matrix;
 ///
-/// let data = vec![1, 2, 3, 4, 5, 6];
-/// let shape = (2, 3);
-/// let matrix = Matrix::new(data, shape).unwrap();
+/// let matrix = matrix![[1, 2, 3],
+///                      [4, 5, 6]];
 ///
 /// let new_matrix = transpose_matrix(&matrix);
 ///
-/// assert_eq!(new_matrix[0][0], 1);
-/// assert_eq!(new_matrix[0][1], 4);
-/// assert_eq!(new_matrix[1][0], 2);
-/// assert_eq!(new_matrix[1][1], 5);
-/// assert_eq!(new_matrix[2][0], 3);
-/// assert_eq!(new_matrix[2][1], 6);
-/// assert_eq!(new_matrix.shape(), (3, 2));
+/// assert_eq!(new_matrix, matrix![[1, 4], [2, 5], [3, 6]]);
 /// ```
 pub fn transpose_matrix<T: Copy + Default>(matrix: &Matrix<T>) -> Matrix<T> {
     let mut result = Matrix::new_default((matrix.shape.1, matrix.shape.0));
@@ -63,22 +55,15 @@ pub fn transpose_matrix<T: Copy + Default>(matrix: &Matrix<T>) -> Matrix<T> {
 ///
 /// ```
 /// use matrix_operations::operations::add_matrices;
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 ///
-/// let shape = (2, 3);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let data2 = vec![1, 2, 3, 4, 5, 6];
-/// let matrix1 = Matrix::new(data1, shape).unwrap();
-/// let matrix2 = Matrix::new(data2, shape).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+/// let matrix2 = matrix1.clone();
 ///
 /// let new_matrix = add_matrices(&matrix1, &matrix2).unwrap();
 ///
-/// assert_eq!(new_matrix[0][0], 2);
-/// assert_eq!(new_matrix[0][1], 4);
-/// assert_eq!(new_matrix[0][2], 6);
-/// assert_eq!(new_matrix[1][0], 8);
-/// assert_eq!(new_matrix[1][1], 10);
-/// assert_eq!(new_matrix[1][2], 12);
+/// assert_eq!(new_matrix, matrix![[2, 4, 6], [8, 10, 12]]);
 /// ```
 ///
 /// # Errors
@@ -87,14 +72,14 @@ pub fn transpose_matrix<T: Copy + Default>(matrix: &Matrix<T>) -> Matrix<T> {
 ///
 /// ```
 /// use matrix_operations::operations::add_matrices;
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 ///
-/// let shape1 = (2, 3);
-/// let shape2 = (3, 2);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let data2 = vec![1, 2, 3, 4, 5, 6];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+///
+/// let matrix2 = matrix![[1, 2],
+///                       [3, 4],
+///                       [5, 6]];
 ///
 /// let new_matrix = add_matrices(&matrix1, &matrix2);
 ///
@@ -117,23 +102,16 @@ pub fn add_matrices<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, ter
 ///
 /// ```
 /// use matrix_operations::operations::add_matrix_with_1row_matrix;
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 ///
-/// let shape1 = (2, 3);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let shape2 = (1, 3);
-/// let data2 = vec![1, 2, 3];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+///
+/// let matrix2 = matrix![[1, 2, 3]];
 ///
 /// let new_matrix = add_matrix_with_1row_matrix(&matrix1, &matrix2).unwrap();
 ///
-/// assert_eq!(new_matrix[0][0], 2);
-/// assert_eq!(new_matrix[0][1], 4);
-/// assert_eq!(new_matrix[0][2], 6);
-/// assert_eq!(new_matrix[1][0], 5);
-/// assert_eq!(new_matrix[1][1], 7);
-/// assert_eq!(new_matrix[1][2], 9);
+/// assert_eq!(new_matrix, matrix![[2, 4, 6], [5, 7, 9]]);
 /// ```
 ///
 /// # Errors
@@ -142,14 +120,13 @@ pub fn add_matrices<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, ter
 ///
 /// ```
 /// use matrix_operations::operations::add_matrix_with_1row_matrix;
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 ///
-/// let shape1 = (2, 3);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let shape2 = (1, 2);
-/// let data2 = vec![1, 2];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+///
+/// let matrix2 = matrix![[1, 2]];
+///
 ///
 /// let new_matrix = add_matrix_with_1row_matrix(&matrix1, &matrix2);
 ///
@@ -158,14 +135,13 @@ pub fn add_matrices<T: Copy + Add<Output = T> + Default>(terms1: &Matrix<T>, ter
 ///
 /// ```
 /// use matrix_operations::operations::add_matrix_with_1row_matrix;
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 ///
-/// let shape1 = (2, 3);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let shape2 = (2, 3);
-/// let data2 = vec![1, 2, 3, 4, 5, 6];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+///
+/// let matrix2 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
 ///
 /// let new_matrix = add_matrix_with_1row_matrix(&matrix1, &matrix2);
 ///
@@ -191,23 +167,17 @@ pub fn add_matrix_with_1row_matrix<T: Copy + Add<Output = T> + Default>(terms1: 
 ///
 /// ```
 /// use matrix_operations::operations::add_matrix_with_1col_matrix;
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 ///
-/// let shape1 = (2, 3);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let shape2 = (2, 1);
-/// let data2 = vec![1, 2];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+///
+/// let matrix2 = matrix![[1],
+///                       [2]];
 ///
 /// let new_matrix = add_matrix_with_1col_matrix(&matrix1, &matrix2).unwrap();
 ///
-/// assert_eq!(new_matrix[0][0], 2);
-/// assert_eq!(new_matrix[0][1], 3);
-/// assert_eq!(new_matrix[0][2], 4);
-/// assert_eq!(new_matrix[1][0], 6);
-/// assert_eq!(new_matrix[1][1], 7);
-/// assert_eq!(new_matrix[1][2], 8);
+/// assert_eq!(new_matrix, matrix![[2, 3, 4], [6, 7, 8]]);
 /// ```
 ///
 /// # Errors
@@ -216,14 +186,13 @@ pub fn add_matrix_with_1row_matrix<T: Copy + Add<Output = T> + Default>(terms1: 
 ///
 /// ```
 /// use matrix_operations::operations::add_matrix_with_1col_matrix;
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 ///
-/// let shape1 = (2, 3);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let shape2 = (2, 2);
-/// let data2 = vec![1, 2, 3, 4];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+///
+/// let matrix2 = matrix![[1, 2],
+///                       [3, 4]];
 ///
 /// let new_matrix = add_matrix_with_1col_matrix(&matrix1, &matrix2);
 ///
@@ -231,15 +200,13 @@ pub fn add_matrix_with_1row_matrix<T: Copy + Add<Output = T> + Default>(terms1: 
 /// ```
 ///
 /// ```
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::add_matrix_with_1col_matrix;
-/// use matrix_operations::Matrix;
 ///
-/// let shape1 = (2, 3);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let shape2 = (3, 1);
-/// let data2 = vec![1, 2, 3];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+///
+/// let matrix2 = matrix![[1, 2, 3]];
 ///
 /// let new_matrix = add_matrix_with_1col_matrix(&matrix1, &matrix2);
 ///
@@ -265,20 +232,14 @@ pub fn add_matrix_with_1col_matrix<T: Copy + Add<Output = T> + Default>(terms1: 
 ///
 /// ```
 /// use matrix_operations::operations::add_matrix_with_scalar;
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 ///
-/// let shape = (2, 3);
-/// let data = vec![1, 2, 3, 4, 5, 6];
-/// let matrix = Matrix::new(data, shape).unwrap();
+/// let matrix = matrix![[1, 2, 3],
+///                      [4, 5, 6]];
 ///
 /// let new_matrix = add_matrix_with_scalar(&matrix, 2);
 ///
-/// assert_eq!(new_matrix[0][0], 3);
-/// assert_eq!(new_matrix[0][1], 4);
-/// assert_eq!(new_matrix[0][2], 5);
-/// assert_eq!(new_matrix[1][0], 6);
-/// assert_eq!(new_matrix[1][1], 7);
-/// assert_eq!(new_matrix[1][2], 8);
+/// assert_eq!(new_matrix, matrix![[3, 4, 5], [6, 7, 8]]);
 /// ```
 pub fn add_matrix_with_scalar<T: Copy + Add<Output = T> + Default>(terms: &Matrix<T>, scalar: T) -> Matrix<T> {
     let mut result = Matrix::new_default(terms.shape);
@@ -293,21 +254,15 @@ pub fn add_matrix_with_scalar<T: Copy + Add<Output = T> + Default>(terms: &Matri
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::apply_to_matrix;
 ///
-/// let data = vec![1, 2, 3, 4, 5, 6];
-/// let shape = (2, 3);
-/// let matrix = Matrix::new(data, shape).unwrap();
+/// let matrix = matrix![[1, 2, 3],
+///                      [4, 5, 6]];
 ///
 /// let new_matrix = apply_to_matrix(&matrix, |x| x * 2);
 ///
-/// assert_eq!(new_matrix[0][0], 2);
-/// assert_eq!(new_matrix[0][1], 4);
-/// assert_eq!(new_matrix[0][2], 6);
-/// assert_eq!(new_matrix[1][0], 8);
-/// assert_eq!(new_matrix[1][1], 10);
-/// assert_eq!(new_matrix[1][2], 12);
+/// assert_eq!(new_matrix, matrix![[2, 4, 6], [8, 10, 12]]);
 /// ```
 pub fn apply_to_matrix<T: Copy + Default>(matrix: &Matrix<T>, f: fn(T) -> T) -> Matrix<T> {
     let mut result = Matrix::new_default(matrix.shape);
@@ -324,7 +279,8 @@ pub fn apply_to_matrix<T: Copy + Default>(matrix: &Matrix<T>, f: fn(T) -> T) -> 
 /// ```
 /// use matrix_operations::matrix;
 ///
-/// let matrix = matrix![[1, 2, 3], [4, 5, 6]];
+/// let matrix = matrix![[1, 2, 3],
+///                      [4, 5, 6]];
 ///
 /// let new_matrix = matrix_operations::operations::apply_to_matrix_with_param(&matrix, |x, y| x + y, 2);
 ///
@@ -344,12 +300,11 @@ pub fn apply_to_matrix_with_param<T: Copy + Default>(matrix: &Matrix<T>, f: fn(T
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::apply_to_matrix_columns;
 ///
-/// let data = vec![1, 2, 3, 4, 5, 6];
-/// let shape = (2, 3);
-/// let matrix = Matrix::new(data, shape).unwrap();
+/// let matrix = matrix![[1, 2, 3],
+///                      [4, 5, 6]];
 ///
 /// fn sum_column(column: Vec<i32>) -> Vec<i32> {
 ///    let sum = column.iter().sum();
@@ -358,12 +313,7 @@ pub fn apply_to_matrix_with_param<T: Copy + Default>(matrix: &Matrix<T>, f: fn(T
 ///
 /// let new_matrix = apply_to_matrix_columns(&matrix, sum_column).unwrap();
 ///
-/// assert_eq!(new_matrix[0][0], 5);
-/// assert_eq!(new_matrix[0][1], 7);
-/// assert_eq!(new_matrix[0][2], 9);
-/// assert_eq!(new_matrix[1][0], 5);
-/// assert_eq!(new_matrix[1][1], 7);
-/// assert_eq!(new_matrix[1][2], 9);
+/// assert_eq!(new_matrix, matrix![[5, 7, 9], [5, 7, 9]]);
 /// ```
 ///
 /// # Errors
@@ -371,12 +321,11 @@ pub fn apply_to_matrix_with_param<T: Copy + Default>(matrix: &Matrix<T>, f: fn(T
 /// If the function does not return a Vec of the same length as the column, an error will be returned
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::apply_to_matrix_columns;
 ///
-/// let data = vec![1, 2, 3, 4, 5, 6];
-/// let shape = (2, 3);
-/// let matrix = Matrix::new(data, shape).unwrap();
+/// let matrix = matrix![[1, 2, 3],
+///                      [4, 5, 6]];
 ///
 /// fn sum_column(column: Vec<i32>) -> Vec<i32> {
 ///    let sum = column.iter().sum();
@@ -409,12 +358,11 @@ pub fn apply_to_matrix_columns<T: Copy + Default>(matrix: &Matrix<T>, f: fn(Vec<
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::apply_to_matrix_rows;
 ///
-/// let data = vec![1, 2, 3, 4, 5, 6];
-/// let shape = (2, 3);
-/// let matrix = Matrix::new(data, shape).unwrap();
+/// let matrix = matrix![[1, 2, 3],
+///                      [4, 5, 6]];
 ///
 /// fn sum_row(row: Vec<i32>) -> Vec<i32> {
 ///    let sum = row.iter().sum();
@@ -423,12 +371,7 @@ pub fn apply_to_matrix_columns<T: Copy + Default>(matrix: &Matrix<T>, f: fn(Vec<
 ///
 /// let new_matrix = apply_to_matrix_rows(&matrix, sum_row).unwrap();
 ///
-/// assert_eq!(new_matrix[0][0], 6);
-/// assert_eq!(new_matrix[0][1], 6);
-/// assert_eq!(new_matrix[0][2], 6);
-/// assert_eq!(new_matrix[1][0], 15);
-/// assert_eq!(new_matrix[1][1], 15);
-/// assert_eq!(new_matrix[1][2], 15);
+/// assert_eq!(new_matrix, matrix![[6, 6, 6], [15, 15, 15]]);
 /// ```
 ///
 /// # Errors
@@ -436,12 +379,11 @@ pub fn apply_to_matrix_columns<T: Copy + Default>(matrix: &Matrix<T>, f: fn(Vec<
 /// If the function does not return a Vec of the same length as the row, an error will be returned
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::{Matrix, matrix};
 /// use matrix_operations::operations::apply_to_matrix_rows;
 ///
-/// let data = vec![1, 2, 3, 4, 5, 6];
-/// let shape = (2, 3);
-/// let matrix = Matrix::new(data, shape).unwrap();
+/// let matrix = matrix![[1, 2, 3],
+///                      [4, 5, 6]];
 ///
 /// fn sum_row(row: Vec<i32>) -> Vec<i32> {
 ///    let sum = row.iter().sum();
@@ -471,25 +413,18 @@ pub fn apply_to_matrix_rows<T: Copy + Default>(matrix: &Matrix<T>, f: fn(Vec<T>)
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::apply_between_matrices;
 ///
-/// let shape = (2, 3);
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
 ///
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let matrix1 = Matrix::new(data1, shape).unwrap();
-///
-/// let data2 = vec![1, 2, 3, 4, 5, 6];
-/// let matrix2 = Matrix::new(data2, shape).unwrap();
+/// let matrix2 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
 ///
 /// let new_matrix = apply_between_matrices(&matrix1, &matrix2, |x, y| x + y).unwrap();
 ///
-/// assert_eq!(new_matrix[0][0], 2);
-/// assert_eq!(new_matrix[0][1], 4);
-/// assert_eq!(new_matrix[0][2], 6);
-/// assert_eq!(new_matrix[1][0], 8);
-/// assert_eq!(new_matrix[1][1], 10);
-/// assert_eq!(new_matrix[1][2], 12);
+/// assert_eq!(new_matrix, matrix![[2, 4, 6], [8, 10, 12]]);
 /// ```
 ///
 /// # Errors
@@ -497,17 +432,15 @@ pub fn apply_to_matrix_rows<T: Copy + Default>(matrix: &Matrix<T>, f: fn(Vec<T>)
 /// If the matrices are not the same shape, an error will be returned
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::apply_between_matrices;
 ///
-/// let shape1 = (2, 3);
-/// let shape2 = (3, 2);
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
 ///
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
-///
-/// let data2 = vec![1, 2, 3, 4, 5, 6];
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix2 = matrix![[1, 2],
+///                       [3, 4],
+///                       [5, 6]];
 ///
 /// let new_matrix = apply_between_matrices(&matrix1, &matrix2, |x, y| x + y);
 ///
@@ -529,21 +462,15 @@ pub fn apply_between_matrices<T: Copy + Default>(matrix1: &Matrix<T>, matrix2: &
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::div_matrix_with_scalar;
 ///
-/// let shape = (2, 3);
-/// let data = vec![1, 2, 3, 4, 5, 6];
-/// let matrix = Matrix::new(data, shape).unwrap();
+/// let matrix = matrix![[1, 2, 3],
+///                      [4, 5, 6]];
 ///
 /// let new_matrix = div_matrix_with_scalar(&matrix, 2);
 ///
-/// assert_eq!(new_matrix[0][0], 0);
-/// assert_eq!(new_matrix[0][1], 1);
-/// assert_eq!(new_matrix[0][2], 1);
-/// assert_eq!(new_matrix[1][0], 2);
-/// assert_eq!(new_matrix[1][1], 2);
-/// assert_eq!(new_matrix[1][2], 3);
+/// assert_eq!(new_matrix, matrix![[0, 1, 1], [2, 2, 3]]);
 /// ```
 pub fn div_matrix_with_scalar<T: Default + Copy + Div<Output = T>>(matrix: &Matrix<T>, scalar: T) -> Matrix<T> {
     let mut result = Matrix::new_default(matrix.shape);
@@ -558,23 +485,18 @@ pub fn div_matrix_with_scalar<T: Default + Copy + Div<Output = T>>(matrix: &Matr
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::sub_matrices;
 ///
-/// let shape = (2, 3);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let data2 = vec![1, 2, 3, 4, 5, 6];
-/// let matrix1 = Matrix::new(data1, shape).unwrap();
-/// let matrix2 = Matrix::new(data2, shape).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+///
+/// let matrix2 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
 ///
 /// let new_matrix = sub_matrices(&matrix1, &matrix2).unwrap();
 ///
-/// assert_eq!(new_matrix[0][0], 0);
-/// assert_eq!(new_matrix[0][1], 0);
-/// assert_eq!(new_matrix[0][2], 0);
-/// assert_eq!(new_matrix[1][0], 0);
-/// assert_eq!(new_matrix[1][1], 0);
-/// assert_eq!(new_matrix[1][2], 0);
+/// assert_eq!(new_matrix, matrix![[0, 0, 0], [0, 0, 0]]);
 /// ```
 ///
 /// # Errors
@@ -582,15 +504,15 @@ pub fn div_matrix_with_scalar<T: Default + Copy + Div<Output = T>>(matrix: &Matr
 /// If the matrices are not compatible for subtraction, an error will be returned
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::sub_matrices;
 ///
-/// let shape1 = (2, 3);
-/// let shape2 = (3, 2);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let data2 = vec![1, 2, 3, 4, 5, 6];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+///
+/// let matrix2 = matrix![[1, 2],
+///                       [3, 4],
+///                       [5, 6]];
 ///
 /// let new_matrix = sub_matrices(&matrix1, &matrix2);
 ///
@@ -612,24 +534,17 @@ pub fn sub_matrices<T: Default + Copy + Sub<Output = T>>(matrix1: &Matrix<T>, ma
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::sub_matrix_with_1row_matrix;
 ///
-/// let shape1 = (2, 3);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let shape2 = (1, 3);
-/// let data2 = vec![1, 2, 3];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+///
+/// let matrix2 = matrix![[1, 2, 3]];
 ///
 /// let new_matrix = sub_matrix_with_1row_matrix(&matrix1, &matrix2).unwrap();
 ///
-/// assert_eq!(new_matrix[0][0], 0);
-/// assert_eq!(new_matrix[0][1], 0);
-/// assert_eq!(new_matrix[0][2], 0);
-/// assert_eq!(new_matrix[1][0], 3);
-/// assert_eq!(new_matrix[1][1], 3);
-/// assert_eq!(new_matrix[1][2], 3);
+/// assert_eq!(new_matrix, matrix![[0, 0, 0], [3, 3, 3]]);
 /// ```
 ///
 /// # Errors
@@ -637,15 +552,13 @@ pub fn sub_matrices<T: Default + Copy + Sub<Output = T>>(matrix1: &Matrix<T>, ma
 /// If the second matrix is not row with same number of column as the first matrix, an error will be returned
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::sub_matrix_with_1row_matrix;
 ///
-/// let shape1 = (2, 3);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let shape2 = (1, 2);
-/// let data2 = vec![1, 2];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+///
+/// let matrix2 = matrix![[1, 2]];
 ///
 /// let new_matrix = sub_matrix_with_1row_matrix(&matrix1, &matrix2);
 ///
@@ -653,15 +566,14 @@ pub fn sub_matrices<T: Default + Copy + Sub<Output = T>>(matrix1: &Matrix<T>, ma
 /// ```
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::sub_matrix_with_1row_matrix;
 ///
-/// let shape1 = (2, 3);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let shape2 = (2, 3);
-/// let data2 = vec![1, 2, 3, 4, 5, 6];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+///
+/// let matrix2 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
 ///
 /// let new_matrix = sub_matrix_with_1row_matrix(&matrix1, &matrix2);
 ///
@@ -686,24 +598,18 @@ pub fn sub_matrix_with_1row_matrix<T: Default + Copy + Sub<Output = T>>(matrix1:
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::sub_matrix_with_1col_matrix;
 ///
-/// let shape1 = (2, 3);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let shape2 = (2, 1);
-/// let data2 = vec![1, 2];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+///
+/// let matrix2 = matrix![[1],
+///                       [2]];
 ///
 /// let new_matrix = sub_matrix_with_1col_matrix(&matrix1, &matrix2).unwrap();
 ///
-/// assert_eq!(new_matrix[0][0], 0);
-/// assert_eq!(new_matrix[0][1], 1);
-/// assert_eq!(new_matrix[0][2], 2);
-/// assert_eq!(new_matrix[1][0], 2);
-/// assert_eq!(new_matrix[1][1], 3);
-/// assert_eq!(new_matrix[1][2], 4);
+/// assert_eq!(new_matrix, matrix![[0, 1, 2], [2, 3, 4]]);
 /// ```
 ///
 /// # Errors
@@ -711,15 +617,14 @@ pub fn sub_matrix_with_1row_matrix<T: Default + Copy + Sub<Output = T>>(matrix1:
 /// If the second matrix is not column with same number of row as the first matrix, an error will be returned
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::sub_matrix_with_1col_matrix;
 ///
-/// let shape1 = (2, 3);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let shape2 = (2, 2);
-/// let data2 = vec![1, 2, 3, 4];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+///
+/// let matrix2 = matrix![[1, 2],
+///                       [3, 4]];
 ///
 /// let new_matrix = sub_matrix_with_1col_matrix(&matrix1, &matrix2);
 ///
@@ -727,15 +632,15 @@ pub fn sub_matrix_with_1row_matrix<T: Default + Copy + Sub<Output = T>>(matrix1:
 /// ```
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::sub_matrix_with_1col_matrix;
 ///
-/// let shape1 = (2, 3);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let shape2 = (3, 1);
-/// let data2 = vec![1, 2, 3];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+///
+/// let matrix2 = matrix![[1],
+///                       [2],
+///                       [3]];
 ///
 /// let new_matrix = sub_matrix_with_1col_matrix(&matrix1, &matrix2);
 ///
@@ -760,21 +665,15 @@ pub fn sub_matrix_with_1col_matrix<T: Default + Copy + Sub<Output = T>>(matrix1:
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::sub_matrix_with_scalar;
 ///
-/// let shape = (2, 3);
-/// let data = vec![1, 2, 3, 4, 5, 6];
-/// let matrix = Matrix::new(data, shape).unwrap();
+/// let matrix = matrix![[1, 2, 3],
+///                      [4, 5, 6]];
 ///
 /// let new_matrix = sub_matrix_with_scalar(&matrix, 2);
 ///
-/// assert_eq!(new_matrix[0][0], -1);
-/// assert_eq!(new_matrix[0][1], 0);
-/// assert_eq!(new_matrix[0][2], 1);
-/// assert_eq!(new_matrix[1][0], 2);
-/// assert_eq!(new_matrix[1][1], 3);
-/// assert_eq!(new_matrix[1][2], 4);
+/// assert_eq!(new_matrix, matrix![[-1, 0, 1], [2, 3, 4]]);
 /// ```
 pub fn sub_matrix_with_scalar<T: Default + Copy + Sub<Output = T>>(matrix: &Matrix<T>, scalar: T) -> Matrix<T> {
     let mut result = Matrix::new_default(matrix.shape);
@@ -789,21 +688,15 @@ pub fn sub_matrix_with_scalar<T: Default + Copy + Sub<Output = T>>(matrix: &Matr
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::mul_matrix_with_scalar;
 ///
-/// let shape = (2, 3);
-/// let data = vec![1, 2, 3, 4, 5, 6];
-/// let matrix = Matrix::new(data, shape).unwrap();
+/// let matrix = matrix![[1, 2, 3],
+///                      [4, 5, 6]];
 ///
 /// let new_matrix = mul_matrix_with_scalar(&matrix, 2);
 ///
-/// assert_eq!(new_matrix[0][0], 2);
-/// assert_eq!(new_matrix[0][1], 4);
-/// assert_eq!(new_matrix[0][2], 6);
-/// assert_eq!(new_matrix[1][0], 8);
-/// assert_eq!(new_matrix[1][1], 10);
-/// assert_eq!(new_matrix[1][2], 12);
+/// assert_eq!(new_matrix, matrix![[2, 4, 6], [8, 10, 12]]);
 /// ```
 pub fn mul_matrix_with_scalar<T: Default + Copy + Mul<Output = T>>(matrix: &Matrix<T>, scalar: T) -> Matrix<T> {
     let mut result = Matrix::new_default(matrix.shape);
@@ -818,23 +711,19 @@ pub fn mul_matrix_with_scalar<T: Default + Copy + Mul<Output = T>>(matrix: &Matr
 /// # Examples
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::dot_matrices;
 ///
-/// let shape1 = (2, 3);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
 ///
-/// let shape2 = (3, 2);
-/// let data2 = vec![1, 2, 3, 4, 5, 6];
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix2 = matrix![[1, 2],
+///                       [3, 4],
+///                       [5, 6]];
 ///
 /// let new_matrix = dot_matrices(&matrix1, &matrix2).unwrap();
 ///
-/// assert_eq!(new_matrix[0][0], 22);
-/// assert_eq!(new_matrix[0][1], 28);
-/// assert_eq!(new_matrix[1][0], 49);
-/// assert_eq!(new_matrix[1][1], 64);
+/// assert_eq!(new_matrix, matrix![[22, 28], [49, 64]]);
 /// ```
 ///
 /// # Errors
@@ -842,16 +731,14 @@ pub fn mul_matrix_with_scalar<T: Default + Copy + Mul<Output = T>>(matrix: &Matr
 /// If the matrices are not compatible for multiplication, an error will be returned
 ///
 /// ```
-/// use matrix_operations::Matrix;
+/// use matrix_operations::matrix;
 /// use matrix_operations::operations::dot_matrices;
 ///
-/// let shape1 = (2, 3);
-/// let data1 = vec![1, 2, 3, 4, 5, 6];
-/// let matrix1 = Matrix::new(data1, shape1).unwrap();
+/// let matrix1 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
 ///
-/// let shape2 = (2, 3);
-/// let data2 = vec![1, 2, 3, 4, 5, 6];
-/// let matrix2 = Matrix::new(data2, shape2).unwrap();
+/// let matrix2 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
 ///
 /// let new_matrix = dot_matrices(&matrix1, &matrix2);
 ///

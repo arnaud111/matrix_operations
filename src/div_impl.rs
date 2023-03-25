@@ -258,8 +258,8 @@ impl Div<Matrix<f32>> for f32 {
     ///
     /// let matrix2 = 2.0 / matrix1;
     ///
-    /// assert_eq!(matrix2[0], [2.0, 1.0, 0.0]);
-    /// assert_eq!(matrix2[1], [0.0, 0.0, 0.0]);
+    /// assert_eq!(matrix2[0], [2.0, 1.0, 0.6666667]);
+    /// assert_eq!(matrix2[1], [0.5, 0.4, 0.33333334]);
     /// ```
     fn div(self, matrix: Matrix<f32>) -> Self::Output {
         apply_to_matrix_with_param(&matrix, |x, y| y / x, self)
@@ -281,8 +281,8 @@ impl Div<Matrix<f64>> for f64 {
     ///
     /// let matrix2 = 2.0 / matrix1;
     ///
-    /// assert_eq!(matrix2[0], [2.0, 1.0, 0.0]);
-    /// assert_eq!(matrix2[1], [0.0, 0.0, 0.0]);
+    /// assert_eq!(matrix2[0], [2.0, 1.0, 0.6666666666666666]);
+    /// assert_eq!(matrix2[1], [0.5, 0.4, 0.3333333333333333]);
     /// ```
     fn div(self, matrix: Matrix<f64>) -> Self::Output {
         apply_to_matrix_with_param(&matrix, |x, y| y / x, self)
