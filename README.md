@@ -1,5 +1,8 @@
 # Matrix Operations
 
+[![Crates.io](https://img.shields.io/crates/v/matrix_operations.svg)](https://crates.io/crates/matrix_operations)
+[![Docs.rs](https://docs.rs/matrix_operations/badge.svg)](https://docs.rs/matrix_operations)
+
 Matrix_Operations is a Rust crate for performing various matrix operations. It provides a set of functions for performing common matrix operations.
 
 ## Installation
