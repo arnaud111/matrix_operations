@@ -1,6 +1,29 @@
 use std::ops::{Add, AddAssign};
 use crate::{add_matrices, add_matrix_with_1col_matrix, add_matrix_with_1row_matrix, add_matrix_with_scalar, Matrix};
 
+impl<T: Copy + Default + Add<Output = T>> Matrix<T> {
+
+    /// Get sum of all elements in the matrix
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
+    ///
+    /// assert_eq!(matrix1.sum(), 21);
+    /// ```
+    pub fn sum(&self) -> T {
+        let mut sum = T::default();
+        for i in 0..self.data.len() {
+            sum = sum + self.data[i];
+        }
+        sum
+    }
+}
+
 impl<T: Copy + Default + AddAssign> Matrix<T> {
 
     /// Adds a scalar to the matrix

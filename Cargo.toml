@@ -1,6 +1,6 @@
 [package]
 name = "matrix_operations"
-version = "0.1.3"
+version = "0.1.4"
 authors = ["arnaud111"]
 edition = "2021"
 description = "A library to perform matrix operations"
