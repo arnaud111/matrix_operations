@@ -1,9 +1,9 @@
 use std::ops::{AddAssign, Mul, MulAssign};
-use crate::{dot_matrices, Matrix, mul_matrix_with_scalar};
+use crate::{dot_matrices, Matrix, mul_matrix_with_scalar, mul_one_by_one};
 
 impl<T: Copy + Default + MulAssign> Matrix<T> {
 
-    /// Allows the matrix to be multiplied to a scalar with operator `*=`
+    /// Allows the matrix to be multiplied to a scalar
     ///
     /// # Examples
     ///
@@ -20,6 +20,52 @@ impl<T: Copy + Default + MulAssign> Matrix<T> {
     pub fn mul_scalar(&mut self, scalar: T) {
         for i in 0..self.data.len() {
             self.data[i] *= scalar;
+        }
+    }
+
+    /// Allows the matrix to be multiplied with another matrix element by element
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// let matrix2 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
+    ///
+    /// matrix1.mul_one_by_one(&matrix2);
+    ///
+    /// assert_eq!(matrix1, matrix![[1, 4, 9], [16, 25, 36]]);
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if the matrices don't have the same shape
+    ///
+    /// ```should_panic
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// let matrix2 = matrix![[1, 2],
+    ///                       [3, 4],
+    ///                       [5, 6]];
+    ///
+    /// // Panics
+    /// matrix1.mul_one_by_one(&matrix2);
+    /// ```
+    pub fn mul_one_by_one(&mut self, other: &Matrix<T>) {
+
+        if self.shape() != other.shape() {
+            panic!("The matrices must have the same shape");
+        }
+
+        for i in 0..self.data.len() {
+            self.data[i] *= other.data[i];
         }
     }
 }
@@ -87,7 +133,7 @@ impl<T: Copy + Default + MulAssign> MulAssign<T> for Matrix<T> {
     }
 }
 
-impl<T: Copy + Default + Mul<Output = T> + AddAssign> MulAssign for Matrix<T> {
+impl<T: Copy + Default + Mul<Output = T> + AddAssign + MulAssign> MulAssign for Matrix<T> {
 
     /// Allows the matrix to be multiplied to another matrix with operator `*=`
     ///
@@ -108,6 +154,22 @@ impl<T: Copy + Default + Mul<Output = T> + AddAssign> MulAssign for Matrix<T> {
     /// assert_eq!(matrix1, matrix![[22, 28], [49, 64]]);
     /// ```
     ///
+    /// You also can multiply two matrices with the same shape element by element
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let mut matrix1 = matrix![[1, 2, 3],
+    ///                           [4, 5, 6]];
+    ///
+    /// let matrix2 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
+    ///
+    /// matrix1 *= matrix2;
+    ///
+    /// assert_eq!(matrix1, matrix![[1, 4, 9], [16, 25, 36]]);
+    /// ```
+    ///
     /// # Panics
     ///
     /// Panics if the matrices can't be multiplied
@@ -118,18 +180,21 @@ impl<T: Copy + Default + Mul<Output = T> + AddAssign> MulAssign for Matrix<T> {
     /// let mut matrix1 = matrix![[1, 2, 3],
     ///                           [4, 5, 6]];
     ///
-    /// let matrix2 = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
+    /// let matrix2 = matrix![[1, 2],
+    ///                       [4, 5]];
     ///
-    /// // Panics
     /// matrix1 *= matrix2;
     /// ```
     fn mul_assign(&mut self, matrix: Self) {
-        self.dot_matrix(&matrix);
+        if self.shape() == matrix.shape() {
+            self.mul_one_by_one(&matrix);
+        } else {
+            self.dot_matrix(&matrix);
+        }
     }
 }
 
-impl<T: Copy + Default + Mul<Output = T> + AddAssign> Mul for Matrix<T> {
+impl<T: Copy + Default + Mul<Output = T> + AddAssign + MulAssign> Mul for Matrix<T> {
     type Output = Matrix<T>;
 
     /// Allows the matrix to be multiplied to another matrix
@@ -151,6 +216,22 @@ impl<T: Copy + Default + Mul<Output = T> + AddAssign> Mul for Matrix<T> {
     /// assert_eq!(matrix3, matrix![[22, 28], [49, 64]]);
     /// ```
     ///
+    /// You also can multiply two matrices with the same shape element by element
+    ///
+    /// ```
+    /// use matrix_operations::matrix;
+    ///
+    /// let matrix1 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
+    ///
+    /// let matrix2 = matrix![[1, 2, 3],
+    ///                       [4, 5, 6]];
+    ///
+    /// let matrix3 = matrix1 * matrix2;
+    ///
+    /// assert_eq!(matrix3, matrix![[1, 4, 9], [16, 25, 36]]);
+    /// ```
+    ///
     /// # Panics
     ///
     /// Panics if the matrices can't be multiplied
@@ -161,14 +242,18 @@ impl<T: Copy + Default + Mul<Output = T> + AddAssign> Mul for Matrix<T> {
     /// let matrix1 = matrix![[1, 2, 3],
     ///                       [4, 5, 6]];
     ///
-    /// let matrix2 = matrix![[1, 2, 3],
-    ///                       [4, 5, 6]];
+    /// let matrix2 = matrix![[1, 2],
+    ///                       [4, 5]];
     ///
     /// // Panics
     /// let matrix3 = matrix1 * matrix2;
     /// ```
     fn mul(self, other: Matrix<T>) -> Self::Output {
-        dot_matrices(&self, &other).unwrap()
+        if self.shape() == other.shape() {
+            mul_one_by_one(&self, &other).unwrap()
+        } else {
+            dot_matrices(&self, &other).unwrap()
+        }
     }
 }
 

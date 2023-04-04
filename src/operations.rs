@@ -706,6 +706,39 @@ pub fn mul_matrix_with_scalar<T: Default + Copy + Mul<Output = T>>(matrix: &Matr
     result
 }
 
+/// Allows the matrix to be multiplied with another matrix element by element
+///
+/// # Examples
+///
+/// ```
+/// use matrix_operations::matrix;
+/// use matrix_operations::operations::mul_one_by_one;
+///
+/// let mut matrix1 = matrix![[1, 2, 3],
+///                           [4, 5, 6]];
+///
+/// let matrix2 = matrix![[1, 2, 3],
+///                       [4, 5, 6]];
+///
+/// let matrix3 = mul_one_by_one(&matrix1, &matrix2).unwrap();
+///
+/// assert_eq!(matrix3, matrix![[1, 4, 9], [16, 25, 36]]);
+/// ```
+pub fn mul_one_by_one<T: Default + Copy + Mul<Output = T> + AddAssign<<T as Mul>::Output>>(matrix1: &Matrix<T>, matrix2: &Matrix<T>) -> Result<Matrix<T>, Box<dyn Error>> {
+
+    if matrix1.shape != matrix2.shape {
+        return Err("Matrices need to have same shape".into());
+    }
+
+    let mut result = Matrix::new_default(matrix1.shape);
+
+    for i in 0..matrix1.data.len() {
+        result.data[i] = matrix1.data[i] * matrix2.data[i];
+    }
+
+    Ok(result)
+}
+
 /// Multiply two matrices together
 ///
 /// # Examples

@@ -11,7 +11,7 @@ Add the following to your Cargo.toml file:
 
 ```toml
 [dependencies]
-matrix_operations = "0.1.4"
+matrix_operations = "0.1.5"
 ```
 
 ## Usage
